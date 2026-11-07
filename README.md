@@ -1,12 +1,12 @@
-#PsicoTab - Sistema Web Psicométrico 🧠📊
+# PsicoTab - Sistema Web Psicométrico 🧠📊
 
 Estado del proyecto: 🏗️ En fase de diseño y arquitectura (Inicio de etapa de codificación: Noviembre 2026).
 
-##📖 Descripción del Proyecto
+## 📖 Descripción del Proyecto
 
 PsicoTab es una plataforma web orientada al sector clínico, diseñada para la automatización, tabulación, baremación y reportabilidad de instrumentos psicométricos abiertos. El sistema busca optimizar los tiempos de análisis de los profesionales de la salud mental y garantizar la precisión matemática en la evaluación de resultados.
 
-##🔐 Seguridad y Arquitectura de Datos
+## 🔐 Seguridad y Arquitectura de Datos
 
 Dada la naturaleza clínica y altamente sensible de la información gestionada, el sistema está siendo diseñado bajo estrictos estándares de manejo de datos:
 
@@ -14,7 +14,7 @@ Seudonimización de Datos Clínicos: Diseño de una arquitectura que disocia la 
 
 Modelado Relacional: Estructuración de una base de datos robusta para gestionar la relación entre profesionales, pacientes, baterías de test y reportes generados.
 
-##🛠️ Stack Tecnológico Proyectado
+## 🛠️ Stack Tecnológico Proyectado
 
 Backend: PHP
 
@@ -22,7 +22,7 @@ Base de Datos: MariaDB (MySQL)
 
 Frontend: HTML5, CSS3, JavaScript puro
 
-##🗺️ Roadmap de Desarrollo
+## 🗺️ Roadmap de Desarrollo
 
 El desarrollo se ejecuta bajo la metodología ágil eXtreme Programming (XP), priorizando ciclos cortos y revisión continua de código durante el segundo semestre de 2026.
 
