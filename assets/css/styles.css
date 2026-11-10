@@ -1,0 +1,135 @@
+:root {
+    --psico-dark: #0f3b5f;
+    --psico-primary: #126382;
+    --psico-teal: #1ba6a6;
+    --psico-accent: #22c1b3;
+    --psico-light-bg: #f4f8fa;
+    --psico-card-border: #e2eaf0;
+}
+
+body {
+    background-color: var(--psico-light-bg);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: #2b3a4a;
+}
+
+/* Navbar general */
+.navbar-psicotab {
+    background: #ffffff;
+    border-bottom: 2px solid var(--psico-card-border);
+    box-shadow: 0 2px 10px rgba(15, 59, 95, 0.05);
+}
+
+.navbar-psicotab .brand-logo {
+    height: 58px;
+    width: auto;
+    object-fit: contain;
+}
+
+/* Indicador de cumplimiento normativo */
+.badge-ley {
+    background-color: rgba(27, 166, 166, 0.12);
+    color: var(--psico-primary);
+    border: 1px solid rgba(27, 166, 166, 0.3);
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+/* Pestañas de Navegación del Wizard */
+.nav-pills-psicotab .nav-link {
+    color: var(--psico-primary);
+    font-weight: 600;
+    border-radius: 10px;
+    padding: 10px 16px;
+    margin: 0 4px;
+    background: #ffffff;
+    border: 1px solid var(--psico-card-border);
+    transition: all 0.2s ease-in-out;
+}
+
+.nav-pills-psicotab .nav-link:hover {
+    background: rgba(27, 166, 166, 0.08);
+    border-color: var(--psico-teal);
+}
+
+.nav-pills-psicotab .nav-link.active {
+    background: linear-gradient(135deg, var(--psico-dark) 0%, var(--psico-teal) 100%);
+    color: #ffffff;
+    box-shadow: 0 4px 10px rgba(27, 166, 166, 0.25);
+    border-color: transparent;
+}
+
+/* Tarjetas de preguntas */
+.question-card {
+    background: #ffffff;
+    border-radius: 12px;
+    border: 1px solid var(--psico-card-border);
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1rem;
+    transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.question-card:hover {
+    box-shadow: 0 4px 14px rgba(15, 59, 95, 0.06);
+    border-color: #cbdbe6;
+}
+
+.question-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background-color: rgba(27, 166, 166, 0.15);
+    color: var(--psico-primary);
+    font-weight: 700;
+    font-size: 0.85rem;
+    margin-right: 8px;
+}
+
+/* Opciones tipo píldora seleccionable */
+.btn-outline-custom {
+    color: #4b6375;
+    border-color: #d1dde5;
+    background-color: #ffffff;
+    font-size: 0.88rem;
+    font-weight: 500;
+    border-radius: 8px;
+    padding: 0.45rem 0.8rem;
+    transition: all 0.15s ease-in-out;
+}
+
+.btn-outline-custom:hover {
+    background-color: rgba(27, 166, 166, 0.08);
+    border-color: var(--psico-teal);
+    color: var(--psico-dark);
+}
+
+.option-group .btn-check:checked + .btn-outline-custom {
+    background: linear-gradient(135deg, var(--psico-primary) 0%, var(--psico-teal) 100%);
+    color: #ffffff;
+    border-color: transparent;
+    box-shadow: 0 2px 6px rgba(27, 166, 166, 0.35);
+}
+
+/* Alerta de campo no respondido */
+.question-incomplete {
+    border: 2px solid #dc3545 !important;
+    background-color: #fff8f8 !important;
+}
+
+/* Botón de acción institucional */
+.btn-psico-primary {
+    background: linear-gradient(135deg, var(--psico-primary) 0%, var(--psico-teal) 100%);
+    border: none;
+    color: #ffffff;
+    font-weight: 600;
+    border-radius: 8px;
+    padding: 0.6rem 1.4rem;
+}
+
+.btn-psico-primary:hover {
+    background: linear-gradient(135deg, var(--psico-dark) 0%, var(--psico-primary) 100%);
+    color: #ffffff;
+}
