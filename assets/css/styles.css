@@ -133,3 +133,63 @@ body {
     background: linear-gradient(135deg, var(--psico-dark) 0%, var(--psico-primary) 100%);
     color: #ffffff;
 }
+
+/* ==========================================================================
+   ESTILOS ESPECÍFICOS: MÓDULO DE LOGIN
+   ========================================================================== 
+*/
+.login-body-layout {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle at 10% 20%, rgba(27, 166, 166, 0.08) 0%, rgba(15, 59, 95, 0.05) 90%), var(--psico-light-bg);
+    padding: 1.5rem;
+}
+
+.login-card {
+    background: #ffffff;
+    border: 1px solid var(--psico-card-border);
+    border-radius: 20px;
+    box-shadow: 0 12px 35px rgba(15, 59, 95, 0.08);
+    width: 100%;
+    max-width: 440px;
+    overflow: hidden;
+}
+
+.login-header {
+    padding: 2.5rem 2rem 1.5rem 2rem;
+    text-align: center;
+    border-bottom: 1px solid rgba(226, 234, 240, 0.6);
+}
+
+.login-logo {
+    height: 68px;
+    width: auto;
+    object-fit: contain;
+    margin-bottom: 0.75rem;
+}
+
+.login-content {
+    padding: 2rem;
+}
+
+.form-floating > .form-control:focus ~ label,
+.form-floating > .form-control:not(:placeholder-shown) ~ label {
+    color: var(--psico-primary);
+}
+
+.form-control:focus {
+    border-color: var(--psico-teal);
+    box-shadow: 0 0 0 0.25rem rgba(27, 166, 166, 0.15);
+}
+
+.legal-notice {
+    font-size: 0.75rem;
+    color: #6c757d;
+    line-height: 1.35;
+    background-color: #f8fafc;
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    border: 1px dashed var(--psico-card-border);
+}
