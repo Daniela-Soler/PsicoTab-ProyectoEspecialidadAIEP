@@ -10,7 +10,6 @@
     <!-- Estilos Globales Centralizados -->
     <link href="../assets/css/styles.css" rel="stylesheet">
     <style>
-        /* Estilos específicos para la selección de pruebas */
         .test-selector-card {
             border: 2px solid var(--psico-card-border);
             border-radius: 12px;
@@ -106,12 +105,12 @@
                         </div>
                     </div>
 
-                    <!-- NUEVO: Selector de Pruebas a Aplicar -->
+                    <!-- Selector de Pruebas a Aplicar -->
                     <div class="card border-0 shadow-sm rounded-4 p-4">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <div>
                                 <h5 class="fw-bold mb-1 text-dark"><i class="bi bi-ui-checks text-primary me-2"></i>Baterías a Aplicar en esta Sesión</h5>
-                                <p class="text-muted small mb-0">Seleccione solo los instrumentos que evaluará hoy. Las pestañas se adaptarán automáticamente.</p>
+                                <p class="text-muted small mb-0">Seleccione los instrumentos que evaluará hoy. Las pestañas se adaptarán dinámicamente.</p>
                             </div>
                             <span class="badge bg-light text-dark border px-3 py-2" id="contador-pruebas">4 seleccionadas</span>
                         </div>
@@ -125,7 +124,7 @@
                                         <span class="badge bg-primary-subtle text-primary">9 ítems</span>
                                     </div>
                                     <h6 class="fw-bold mb-1 text-dark">PHQ-9</h6>
-                                    <p class="text-muted small mb-0">Depresión y alerta de riesgo autolesivo.</p>
+                                    <p class="text-muted small mb-0">Depresión y alerta autolesiva.</p>
                                 </label>
                             </div>
 
@@ -137,7 +136,7 @@
                                         <span class="badge bg-success-subtle text-success">7 ítems</span>
                                     </div>
                                     <h6 class="fw-bold mb-1 text-dark">GAD-7</h6>
-                                    <p class="text-muted small mb-0">Tamizaje de sintomatología ansiosa.</p>
+                                    <p class="text-muted small mb-0">Tamizaje sintomatología ansiosa.</p>
                                 </label>
                             </div>
 
@@ -161,7 +160,7 @@
                                         <span class="badge bg-info-subtle text-info">12 ítems</span>
                                     </div>
                                     <h6 class="fw-bold mb-1 text-dark">WHODAS 2.0</h6>
-                                    <p class="text-muted small mb-0">Evaluación de discapacidad y CIF.</p>
+                                    <p class="text-muted small mb-0">Evaluación de discapacidad (CIF).</p>
                                 </label>
                             </div>
                         </div>
@@ -174,28 +173,41 @@
                     </div>
                 </div>
 
-                <!-- PESTAÑA 2: PHQ-9 -->
+                <!-- PESTAÑA 2: PHQ-9 (9 ÍTEMS COMPLETOS) -->
                 <div class="tab-pane fade" id="tab-phq9" role="tabpanel">
                     <div class="alert alert-info border-0 shadow-sm mb-3">
-                        <i class="bi bi-info-circle-fill me-2"></i><strong>PHQ-9:</strong> Frecuencia de los síntomas durante las últimas 2 semanas.
-                    </div>
-                    <!-- Ítem 1 -->
-                    <div class="question-card">
-                        <p class="fw-semibold mb-2"><span class="question-number">1</span> Poco interés o alegría por hacer las cosas.</p>
-                        <div class="btn-group option-group w-100 flex-wrap" role="group">
-                            <input type="radio" class="btn-check" name="phq9_1" id="phq9_1_0" value="0">
-                            <label class="btn btn-outline-custom flex-grow-1" for="phq9_1_0">Nunca (0)</label>
-                            <input type="radio" class="btn-check" name="phq9_1" id="phq9_1_1" value="1">
-                            <label class="btn btn-outline-custom flex-grow-1" for="phq9_1_1">Varios días (1)</label>
-                            <input type="radio" class="btn-check" name="phq9_1" id="phq9_1_2" value="2">
-                            <label class="btn btn-outline-custom flex-grow-1" for="phq9_1_2">Más de la mitad (2)</label>
-                            <input type="radio" class="btn-check" name="phq9_1" id="phq9_1_3" value="3">
-                            <label class="btn btn-outline-custom flex-grow-1" for="phq9_1_3">Casi todos los días (3)</label>
-                        </div>
+                        <i class="bi bi-info-circle-fill me-2"></i><strong>PHQ-9:</strong> Durante las últimas 2 semanas, ¿con qué frecuencia le han molestado los siguientes problemas?
                     </div>
 
+                    <?php
+                    $items_phq9 = [
+                        1 => "Poco interés o alegría por hacer las cosas.",
+                        2 => "Sensación de estar decaído/a, deprimido/a o desesperanzado/a.",
+                        3 => "Dificultad para conciliar el sueño, continuar durmiendo o dormir demasiado.",
+                        4 => "Sensación de cansancio o de tener poca energía.",
+                        5 => "Poco apetito o comer en exceso.",
+                        6 => "Sentirse mal con uno/a mismo/a (sentir que es un fracaso o que ha decepcionado a su familia).",
+                        7 => "Dificultad para concentrarse en cosas tales como leer el periódico o ver televisión.",
+                        8 => "Moverse o hablar tan lentamente que los demás lo notan, o bien estar tan inquieto/a que se mueve mucho más de lo habitual."
+                    ];
+                    foreach ($items_phq9 as $num => $enunciado): ?>
+                        <div class="question-card" id="q-phq9-<?= $num ?>">
+                            <p class="fw-semibold mb-2"><span class="question-number"><?= $num ?></span> <?= $enunciado ?></p>
+                            <div class="btn-group option-group w-100 flex-wrap" role="group">
+                                <input type="radio" class="btn-check" name="phq9_<?= $num ?>" id="phq9_<?= $num ?>_0" value="0">
+                                <label class="btn btn-outline-custom flex-grow-1" for="phq9_<?= $num ?>_0">Nunca (0)</label>
+                                <input type="radio" class="btn-check" name="phq9_<?= $num ?>" id="phq9_<?= $num ?>_1" value="1">
+                                <label class="btn btn-outline-custom flex-grow-1" for="phq9_<?= $num ?>_1">Varios días (1)</label>
+                                <input type="radio" class="btn-check" name="phq9_<?= $num ?>" id="phq9_<?= $num ?>_2" value="2">
+                                <label class="btn btn-outline-custom flex-grow-1" for="phq9_<?= $num ?>_2">Más de la mitad (2)</label>
+                                <input type="radio" class="btn-check" name="phq9_<?= $num ?>" id="phq9_<?= $num ?>_3" value="3">
+                                <label class="btn btn-outline-custom flex-grow-1" for="phq9_<?= $num ?>_3">Casi todos los días (3)</label>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+
                     <!-- Ítem 9 (Crítico) -->
-                    <div class="question-card border-warning" style="background-color: #fffefb;">
+                    <div class="question-card border-warning" id="q-phq9-9" style="background-color: #fffefb;">
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <p class="fw-semibold mb-0"><span class="question-number bg-warning text-dark">9</span> Pensamientos de que estaría mejor muerto/a o de lastimarse de alguna manera.</p>
                             <span class="badge bg-warning text-dark"><i class="bi bi-exclamation-triangle-fill"></i> Ítem Crítico</span>
@@ -218,76 +230,121 @@
                     </div>
                 </div>
 
-                <!-- PESTAÑA 3: GAD-7 -->
+                <!-- PESTAÑA 3: GAD-7 (7 ÍTEMS COMPLETOS) -->
                 <div class="tab-pane fade" id="tab-gad7" role="tabpanel">
                     <div class="alert alert-info border-0 shadow-sm mb-3">
-                        <i class="bi bi-info-circle-fill me-2"></i><strong>GAD-7:</strong> Síntomas de ansiedad durante las últimas 2 semanas.
+                        <i class="bi bi-info-circle-fill me-2"></i><strong>GAD-7:</strong> Durante las últimas 2 semanas, ¿con qué frecuencia le han molestado los siguientes problemas?
                     </div>
-                    <div class="question-card">
-                        <p class="fw-semibold mb-2"><span class="question-number">1</span> Sentirse nervioso/a, intranquilo/a o con los nervios de punta.</p>
-                        <div class="btn-group option-group w-100 flex-wrap" role="group">
-                            <input type="radio" class="btn-check" name="gad7_1" id="gad7_1_0" value="0">
-                            <label class="btn btn-outline-custom flex-grow-1" for="gad7_1_0">Nunca (0)</label>
-                            <input type="radio" class="btn-check" name="gad7_1" id="gad7_1_1" value="1">
-                            <label class="btn btn-outline-custom flex-grow-1" for="gad7_1_1">Varios días (1)</label>
-                            <input type="radio" class="btn-check" name="gad7_1" id="gad7_1_2" value="2">
-                            <label class="btn btn-outline-custom flex-grow-1" for="gad7_1_2">Más de la mitad (2)</label>
-                            <input type="radio" class="btn-check" name="gad7_1" id="gad7_1_3" value="3">
-                            <label class="btn btn-outline-custom flex-grow-1" for="gad7_1_3">Casi todos los días (3)</label>
+
+                    <?php
+                    $items_gad7 = [
+                        1 => "Sentirse nervioso/a, intranquilo/a o con los nervios de punta.",
+                        2 => "No poder parar o controlar las preocupaciones.",
+                        3 => "Preocuparse demasiado por diferentes cosas.",
+                        4 => "Dificultad para relajarse.",
+                        5 => "Estar tan inquieto/a que es difícil permanecer sentado/a.",
+                        6 => "Irritarse o molestarse fácilmente.",
+                        7 => "Sentir miedo como si algo terrible fuera a suceder."
+                    ];
+                    foreach ($items_gad7 as $num => $enunciado): ?>
+                        <div class="question-card" id="q-gad7-<?= $num ?>">
+                            <p class="fw-semibold mb-2"><span class="question-number"><?= $num ?></span> <?= $enunciado ?></p>
+                            <div class="btn-group option-group w-100 flex-wrap" role="group">
+                                <input type="radio" class="btn-check" name="gad7_<?= $num ?>" id="gad7_<?= $num ?>_0" value="0">
+                                <label class="btn btn-outline-custom flex-grow-1" for="gad7_<?= $num ?>_0">Nunca (0)</label>
+                                <input type="radio" class="btn-check" name="gad7_<?= $num ?>" id="gad7_<?= $num ?>_1" value="1">
+                                <label class="btn btn-outline-custom flex-grow-1" for="gad7_<?= $num ?>_1">Varios días (1)</label>
+                                <input type="radio" class="btn-check" name="gad7_<?= $num ?>" id="gad7_<?= $num ?>_2" value="2">
+                                <label class="btn btn-outline-custom flex-grow-1" for="gad7_<?= $num ?>_2">Más de la mitad (2)</label>
+                                <input type="radio" class="btn-check" name="gad7_<?= $num ?>" id="gad7_<?= $num ?>_3" value="3">
+                                <label class="btn btn-outline-custom flex-grow-1" for="gad7_<?= $num ?>_3">Casi todos los días (3)</label>
+                            </div>
                         </div>
-                    </div>
+                    <?php endforeach; ?>
+
                     <div class="d-flex justify-content-between mt-4">
                         <button type="button" class="btn btn-outline-secondary btn-anterior" data-current="gad7"><i class="bi bi-arrow-left"></i> Anterior</button>
                         <button type="button" class="btn btn-psico-primary btn-siguiente" data-current="gad7">Siguiente <i class="bi bi-arrow-right"></i></button>
                     </div>
                 </div>
 
-                <!-- PESTAÑA 4: ASRS v1.1 -->
+                <!-- PESTAÑA 4: ASRS v1.1 (6 ÍTEMS PARTE A OMS) -->
                 <div class="tab-pane fade" id="tab-asrs" role="tabpanel">
                     <div class="alert alert-info border-0 shadow-sm mb-3">
-                        <i class="bi bi-info-circle-fill me-2"></i><strong>ASRS v1.1:</strong> Síntomas atencionales en adultos (últimos 6 meses).
+                        <i class="bi bi-info-circle-fill me-2"></i><strong>ASRS v1.1 (Cribado en Adultos):</strong> Responda pensando en los últimos 6 meses.
                     </div>
-                    <div class="question-card">
-                        <p class="fw-semibold mb-2"><span class="question-number">1</span> ¿Con qué frecuencia tiene dificultad para terminar los detalles finales de un proyecto?</p>
-                        <div class="btn-group option-group w-100 flex-wrap" role="group">
-                            <input type="radio" class="btn-check" name="asrs_1" id="asrs_1_0" value="0">
-                            <label class="btn btn-outline-custom flex-grow-1" for="asrs_1_0">Nunca</label>
-                            <input type="radio" class="btn-check" name="asrs_1" id="asrs_1_1" value="1">
-                            <label class="btn btn-outline-custom flex-grow-1" for="asrs_1_1">Raras veces</label>
-                            <input type="radio" class="btn-check" name="asrs_1" id="asrs_1_2" value="2">
-                            <label class="btn btn-outline-custom flex-grow-1" for="asrs_1_2">A veces</label>
-                            <input type="radio" class="btn-check" name="asrs_1" id="asrs_1_3" value="3">
-                            <label class="btn btn-outline-custom flex-grow-1" for="asrs_1_3">A menudo</label>
-                            <input type="radio" class="btn-check" name="asrs_1" id="asrs_1_4" value="4">
-                            <label class="btn btn-outline-custom flex-grow-1" for="asrs_1_4">Muy a menudo</label>
+
+                    <?php
+                    $items_asrs = [
+                        1 => "¿Con qué frecuencia tiene dificultad para terminar los detalles finales de un proyecto una vez que las partes desafiantes han sido resueltas?",
+                        2 => "¿Con qué frecuencia tiene dificultad para poner las cosas en orden cuando tiene que hacer una tarea que requiere organización?",
+                        3 => "¿Con qué frecuencia tiene problemas para recordar citas u obligaciones?",
+                        4 => "Cuando tiene una tarea que requiere pensar mucho, ¿con qué frecuencia evita o retrasa comenzarla?",
+                        5 => "¿Con qué frecuencia mueve o retuerce las manos o los pies cuando tiene que permanecer sentado/a por mucho tiempo?",
+                        6 => "¿Con qué frecuencia se siente demasiado activo/a y obligado/a a hacer cosas, como si tuviera un motor adentro?"
+                    ];
+                    foreach ($items_asrs as $num => $enunciado): ?>
+                        <div class="question-card" id="q-asrs-<?= $num ?>">
+                            <p class="fw-semibold mb-2"><span class="question-number"><?= $num ?></span> <?= $enunciado ?></p>
+                            <div class="btn-group option-group w-100 flex-wrap" role="group">
+                                <input type="radio" class="btn-check" name="asrs_<?= $num ?>" id="asrs_<?= $num ?>_0" value="0">
+                                <label class="btn btn-outline-custom flex-grow-1" for="asrs_<?= $num ?>_0">Nunca (0)</label>
+                                <input type="radio" class="btn-check" name="asrs_<?= $num ?>" id="asrs_<?= $num ?>_1" value="1">
+                                <label class="btn btn-outline-custom flex-grow-1" for="asrs_<?= $num ?>_1">Raras veces (1)</label>
+                                <input type="radio" class="btn-check" name="asrs_<?= $num ?>" id="asrs_<?= $num ?>_2" value="2">
+                                <label class="btn btn-outline-custom flex-grow-1" for="asrs_<?= $num ?>_2">A veces (2)</label>
+                                <input type="radio" class="btn-check" name="asrs_<?= $num ?>" id="asrs_<?= $num ?>_3" value="3">
+                                <label class="btn btn-outline-custom flex-grow-1" for="asrs_<?= $num ?>_3">A menudo (3)</label>
+                                <input type="radio" class="btn-check" name="asrs_<?= $num ?>" id="asrs_<?= $num ?>_4" value="4">
+                                <label class="btn btn-outline-custom flex-grow-1" for="asrs_<?= $num ?>_4">Muy a menudo (4)</label>
+                            </div>
                         </div>
-                    </div>
+                    <?php endforeach; ?>
+
                     <div class="d-flex justify-content-between mt-4">
                         <button type="button" class="btn btn-outline-secondary btn-anterior" data-current="asrs"><i class="bi bi-arrow-left"></i> Anterior</button>
                         <button type="button" class="btn btn-psico-primary btn-siguiente" data-current="asrs">Siguiente <i class="bi bi-arrow-right"></i></button>
                     </div>
                 </div>
 
-                <!-- PESTAÑA 5: WHODAS 2.0 -->
+                <!-- PESTAÑA 5: WHODAS 2.0 (12 ÍTEMS COMPLETOS) -->
                 <div class="tab-pane fade" id="tab-whodas" role="tabpanel">
                     <div class="alert alert-info border-0 shadow-sm mb-3">
-                        <i class="bi bi-info-circle-fill me-2"></i><strong>WHODAS 2.0:</strong> Limitación funcional en los últimos 30 días.
+                        <i class="bi bi-info-circle-fill me-2"></i><strong>WHODAS 2.0 (12 ítems):</strong> En los últimos 30 días, ¿cuánta dificultad ha tenido debido a su estado de salud para realizar las siguientes actividades?
                     </div>
-                    <div class="question-card">
-                        <p class="fw-semibold mb-2"><span class="question-number">1</span> Ponerse de pie durante periodos prolongados (ej. 30 minutos).</p>
-                        <div class="btn-group option-group w-100 flex-wrap" role="group">
-                            <input type="radio" class="btn-check" name="whodas_1" id="whodas_1_1" value="1">
-                            <label class="btn btn-outline-custom flex-grow-1" for="whodas_1_1">1. Ninguna</label>
-                            <input type="radio" class="btn-check" name="whodas_1" id="whodas_1_2" value="2">
-                            <label class="btn btn-outline-custom flex-grow-1" for="whodas_1_2">2. Leve</label>
-                            <input type="radio" class="btn-check" name="whodas_1" id="whodas_1_3" value="3">
-                            <label class="btn btn-outline-custom flex-grow-1" for="whodas_1_3">3. Moderada</label>
-                            <input type="radio" class="btn-check" name="whodas_1" id="whodas_1_4" value="4">
-                            <label class="btn btn-outline-custom flex-grow-1" for="whodas_1_4">4. Severa</label>
-                            <input type="radio" class="btn-check" name="whodas_1" id="whodas_1_5" value="5">
-                            <label class="btn btn-outline-custom flex-grow-1" for="whodas_1_5">5. Extrema</label>
+
+                    <?php
+                    $items_whodas = [
+                        1 => "Estar de pie durante periodos prolongados (ej. 30 minutos).",
+                        2 => "Cuidar de las responsabilidades de su casa.",
+                        3 => "Aprender una nueva tarea (ej. cómo llegar a un sitio nuevo).",
+                        4 => "Participar en actividades de la comunidad (ej. festejos, actividades religiosas u otras).",
+                        5 => "¿Cuánto le ha afectado emocionalmente su condición de salud?",
+                        6 => "Concentrarse en hacer algo durante diez minutos.",
+                        7 => "Caminar una larga distancia (ej. un kilómetro).",
+                        8 => "Lavarse o asearse el cuerpo entero.",
+                        9 => "Vestirse.",
+                        10 => "Relacionarse con personas que no conoce.",
+                        11 => "Mantener una amistad.",
+                        12 => "Su trabajo diario o sus actividades de estudio."
+                    ];
+                    foreach ($items_whodas as $num => $enunciado): ?>
+                        <div class="question-card" id="q-whodas-<?= $num ?>">
+                            <p class="fw-semibold mb-2"><span class="question-number"><?= $num ?></span> <?= $enunciado ?></p>
+                            <div class="btn-group option-group w-100 flex-wrap" role="group">
+                                <input type="radio" class="btn-check" name="whodas_<?= $num ?>" id="whodas_<?= $num ?>_1" value="1">
+                                <label class="btn btn-outline-custom flex-grow-1" for="whodas_<?= $num ?>_1">1. Ninguna</label>
+                                <input type="radio" class="btn-check" name="whodas_<?= $num ?>" id="whodas_<?= $num ?>_2" value="2">
+                                <label class="btn btn-outline-custom flex-grow-1" for="whodas_<?= $num ?>_2">2. Leve</label>
+                                <input type="radio" class="btn-check" name="whodas_<?= $num ?>" id="whodas_<?= $num ?>_3" value="3">
+                                <label class="btn btn-outline-custom flex-grow-1" for="whodas_<?= $num ?>_3">3. Moderada</label>
+                                <input type="radio" class="btn-check" name="whodas_<?= $num ?>" id="whodas_<?= $num ?>_4" value="4">
+                                <label class="btn btn-outline-custom flex-grow-1" for="whodas_<?= $num ?>_4">4. Severa</label>
+                                <input type="radio" class="btn-check" name="whodas_<?= $num ?>" id="whodas_<?= $num ?>_5" value="5">
+                                <label class="btn btn-outline-custom flex-grow-1" for="whodas_<?= $num ?>_5">5. Extrema</label>
+                            </div>
                         </div>
-                    </div>
+                    <?php endforeach; ?>
 
                     <div class="d-flex justify-content-between mt-4">
                         <button type="button" class="btn btn-outline-secondary btn-anterior" data-current="whodas"><i class="bi bi-arrow-left"></i> Anterior</button>
@@ -333,7 +390,6 @@
             return Array.from(checks).map(c => c.value);
         }
 
-        // Mostrar / Ocultar pestañas según selección
         function actualizarTabsVisibles() {
             const seleccionadas = getPruebasSeleccionadas();
             document.getElementById('contador-pruebas').textContent = `${seleccionadas.length} seleccionada(s)`;
@@ -345,7 +401,6 @@
                 }
             });
 
-            // Si no hay ninguna seleccionada, avisar
             const btnIniciar = document.getElementById('btn-iniciar-pruebas');
             if (seleccionadas.length === 0) {
                 btnIniciar.disabled = true;
@@ -360,7 +415,6 @@
             check.addEventListener('change', actualizarTabsVisibles);
         });
 
-        // Navegación fluida
         function irATab(tabId) {
             const triggerEl = document.getElementById(tabId);
             if (triggerEl) {
@@ -370,7 +424,6 @@
             }
         }
 
-        // Botón Iniciar desde Datos del Paciente
         document.getElementById('btn-iniciar-pruebas').addEventListener('click', () => {
             const seleccionadas = getPruebasSeleccionadas();
             if (seleccionadas.length > 0) {
@@ -378,7 +431,6 @@
             }
         });
 
-        // Botones "Siguiente" dinámicos
         document.querySelectorAll('.btn-siguiente').forEach(btn => {
             btn.addEventListener('click', () => {
                 const current = btn.getAttribute('data-current');
@@ -389,13 +441,11 @@
                     const siguiente = seleccionadas[currentIndex + 1];
                     irATab(`${siguiente}-tab`);
                 } else {
-                    // Si ya es la última seleccionada, ofrecer enviar
                     enviarFormulario();
                 }
             });
         });
 
-        // Botones "Anterior" dinámicos
         document.querySelectorAll('.btn-anterior').forEach(btn => {
             btn.addEventListener('click', () => {
                 const current = btn.getAttribute('data-current');
@@ -411,7 +461,6 @@
             });
         });
 
-        // Modal reactivo para Ítem 9 PHQ-9
         document.querySelectorAll('.item-critico').forEach(radio => {
             radio.addEventListener('change', (e) => {
                 if (parseInt(e.target.value, 10) > 0) {
@@ -421,7 +470,6 @@
             });
         });
 
-        // Envío final
         function enviarFormulario() {
             const form = document.getElementById('form-evaluacion');
             const btns = document.querySelectorAll('.btn-finalizar');
@@ -432,7 +480,6 @@
             form.submit();
         }
 
-        // Inicializar estado de pestañas al cargar
         actualizarTabsVisibles();
     </script>
 </body>
