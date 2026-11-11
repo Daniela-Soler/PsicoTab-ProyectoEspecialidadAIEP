@@ -175,9 +175,10 @@
 
                 <!-- PESTAÑA 2: PHQ-9 (9 ÍTEMS COMPLETOS) -->
                 <div class="tab-pane fade" id="tab-phq9" role="tabpanel">
-                    <div class="alert alert-info border-0 shadow-sm mb-3">
-                        <i class="bi bi-info-circle-fill me-2"></i><strong>PHQ-9:</strong> Durante las últimas 2 semanas, ¿con qué frecuencia le han molestado los siguientes problemas?
-                    </div>
+                    <div class="alert alert-info border-0 shadow-sm d-flex justify-content-between align-items-center mb-3">
+                    <div><i class="bi bi-info-circle-fill me-2"></i><strong>PHQ-9:</strong> Durante las últimas 2 semanas, ¿con qué frecuencia le han molestado los siguientes problemas?</div>
+                    <span id="progreso-phq9" class="badge bg-secondary-subtle text-dark">0/9 respondidas</span>
+        </div>
 
                     <?php
                     $items_phq9 = [
@@ -232,9 +233,10 @@
 
                 <!-- PESTAÑA 3: GAD-7 (7 ÍTEMS COMPLETOS) -->
                 <div class="tab-pane fade" id="tab-gad7" role="tabpanel">
-                    <div class="alert alert-info border-0 shadow-sm mb-3">
-                        <i class="bi bi-info-circle-fill me-2"></i><strong>GAD-7:</strong> Durante las últimas 2 semanas, ¿con qué frecuencia le han molestado los siguientes problemas?
-                    </div>
+                    <div class="alert alert-info border-0 shadow-sm d-flex justify-content-between align-items-center mb-3">
+                    <div><i class="bi bi-info-circle-fill me-2"></i><strong>GAD-7:</strong> Durante las últimas 2 semanas, ¿con qué frecuencia le han molestado los siguientes problemas?</div>
+                    <span id="progreso-gad7" class="badge bg-secondary-subtle text-dark">0/7 respondidas</span>
+                </div>
 
                     <?php
                     $items_gad7 = [
@@ -270,8 +272,9 @@
 
                 <!-- PESTAÑA 4: ASRS v1.1 (6 ÍTEMS PARTE A OMS) -->
                 <div class="tab-pane fade" id="tab-asrs" role="tabpanel">
-                    <div class="alert alert-info border-0 shadow-sm mb-3">
-                        <i class="bi bi-info-circle-fill me-2"></i><strong>ASRS v1.1 (Cribado en Adultos):</strong> Responda pensando en los últimos 6 meses.
+                    <div class="alert alert-info border-0 shadow-sm d-flex justify-content-between align-items-center mb-3">
+                    <div><i class="bi bi-info-circle-fill me-2"></i><strong>ASRS v1.1 (Cribado en Adultos):</strong> Responda pensando en los últimos 6 meses.</div>
+                    <span id="progreso-asrs" class="badge bg-secondary-subtle text-dark">0/6 respondidas</span>
                     </div>
 
                     <?php
@@ -309,9 +312,10 @@
 
                 <!-- PESTAÑA 5: WHODAS 2.0 (12 ÍTEMS COMPLETOS) -->
                 <div class="tab-pane fade" id="tab-whodas" role="tabpanel">
-                    <div class="alert alert-info border-0 shadow-sm mb-3">
-                        <i class="bi bi-info-circle-fill me-2"></i><strong>WHODAS 2.0 (12 ítems):</strong> En los últimos 30 días, ¿cuánta dificultad ha tenido debido a su estado de salud para realizar las siguientes actividades?
-                    </div>
+                    <div class="alert alert-info border-0 shadow-sm d-flex justify-content-between align-items-center mb-3">
+                    <div><i class="bi bi-info-circle-fill me-2"></i><strong>WHODAS 2.0 (12 ítems):</strong> En los últimos 30 días, ¿cuánta dificultad ha tenido debido a su estado de salud para realizar las siguientes actividades?</div>
+                    <span id="progreso-whodas" class="badge bg-secondary-subtle text-dark">0/12 respondidas</span>
+                </div>
 
                     <?php
                     $items_whodas = [
@@ -382,6 +386,7 @@
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../assets/js/rut-validator.js"></script>
+    <script src="../assets/js/form-validation.js"></script>
     <script>
         const ordenPruebas = ['phq9', 'gad7', 'asrs', 'whodas'];
 
