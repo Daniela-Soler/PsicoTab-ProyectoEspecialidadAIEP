@@ -70,7 +70,31 @@
                 <!-- PESTAÑA 1: DATOS PACIENTE Y SELECCIÓN DE INSTRUMENTOS -->
                 <div class="tab-pane fade show active" id="tab-paciente" role="tabpanel">
                     <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
-                        <h5 class="fw-bold mb-3 text-dark"><i class="bi bi-person-lines-fill text-primary me-2"></i>Ficha de Identificación</h5>
+                        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+                            <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-person-lines-fill text-primary me-2"></i>Ficha de Identificación</h5>
+                            
+                            <!-- Selector Paciente Nuevo vs Antiguo -->
+                            <div class="btn-group" role="group" aria-label="Tipo de paciente">
+                                <input type="radio" class="btn-check" name="tipo_paciente" id="tipo_nuevo" value="nuevo" checked>
+                                <label class="btn btn-outline-primary btn-sm px-3" for="tipo_nuevo"><i class="bi bi-person-plus me-1"></i>Paciente Nuevo</label>
+
+                                <input type="radio" class="btn-check" name="tipo_paciente" id="tipo_antiguo" value="antiguo">
+                                <label class="btn btn-outline-primary btn-sm px-3" for="tipo_antiguo"><i class="bi bi-person-check me-1"></i>Paciente Antiguo</label>
+                            </div>
+                        </div>
+
+                        <!-- Buscador dinámico (solo visible si elige Paciente Antiguo) -->
+                        <div id="bloque-buscar-antiguo" class="alert alert-light border mb-3 d-none">
+                            <label for="buscar_paciente_bd" class="form-label small fw-bold text-primary mb-1">
+                                <i class="bi bi-search me-1"></i>Buscar en historial registrado (RUT o Nombre)
+                            </label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="buscar_paciente_bd" placeholder="Ej: 12.345.678-K o González">
+                                <button class="btn btn-primary" type="button" id="btn-cargar-paciente">Cargar Datos</button>
+                            </div>
+                            <div class="form-text small">Al cargar un paciente antiguo, sus datos demográficos se completan automáticamente para evitar duplicados en la BD.</div>
+                        </div>
+
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label for="paciente_rut" class="form-label fw-bold">RUT / Identificador</label>
@@ -101,6 +125,14 @@
                                     <option value="educacional">Programa Integración / Educacional</option>
                                     <option value="consulta_privada">Consulta Particular</option>
                                 </select>
+                            </div>
+
+                            <!-- Campo de Observaciones Iniciales de la Sesión -->
+                            <div class="col-12 mt-3">
+                                <label for="observaciones" class="form-label fw-bold">
+                                    <i class="bi bi-journal-text text-primary me-1"></i>Observaciones Clínicas de la Evaluación <span class="text-muted fw-normal small">(Opcional)</span>
+                                </label>
+                                <textarea class="form-control" id="observaciones" name="observaciones" rows="2" placeholder="Registre motivo de consulta, actitud frente a la prueba, medicación actual u observaciones relevantes..."></textarea>
                             </div>
                         </div>
                     </div>
@@ -486,6 +518,43 @@
         }
 
         actualizarTabsVisibles();
+
+        // Alternar bloque de búsqueda de paciente antiguo
+        const radioNuevo = document.getElementById('tipo_nuevo');
+        const radioAntiguo = document.getElementById('tipo_antiguo');
+        const bloqueAntiguo = document.getElementById('bloque-buscar-antiguo');
+
+        function toggleTipoPaciente() {
+            const esAntiguo = radioAntiguo.checked;
+            bloqueAntiguo.classList.toggle('d-none', !esAntiguo);
+            
+            // Bloquear edición de campos base si es antiguo (opcional)
+            document.getElementById('paciente_rut').readOnly = esAntiguo;
+            if (!esAntiguo) {
+                document.getElementById('paciente_rut').value = '';
+                document.getElementById('paciente_nombre').value = '';
+                document.getElementById('paciente_nacimiento').value = '';
+                document.getElementById('paciente_sexo').value = '';
+            }
+        }
+
+        radioNuevo.addEventListener('change', toggleTipoPaciente);
+        radioAntiguo.addEventListener('change', toggleTipoPaciente);
+
+        // Simulación de carga desde BD al buscar paciente antiguo
+        document.getElementById('btn-cargar-paciente').addEventListener('click', () => {
+            const query = document.getElementById('buscar_paciente_bd').value.trim();
+            if (!query) {
+                alert('Ingrese un RUT o apellido para buscar.');
+                return;
+            }
+            // Datos simulados que luego Daniela traerá vía fetch/AJAX o PHP
+            document.getElementById('paciente_rut').value = '12.345.678-K';
+            document.getElementById('paciente_nombre').value = 'P. González R.';
+            document.getElementById('paciente_nacimiento').value = '1994-05-14';
+            document.getElementById('paciente_sexo').value = 'F';
+            document.getElementById('paciente_motivo').value = 'atencion_primaria';
+        });
     </script>
 </body>
 </html>

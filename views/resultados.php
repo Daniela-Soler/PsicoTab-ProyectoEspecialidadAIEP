@@ -183,6 +183,39 @@ $alerta_critica_phq9 = true; // Simulado para maqueta visual
 
         </div>
 
+        <!-- Bloque de Observaciones Clínicas (Editable tras conocer resultados) -->
+        <div class="card border-0 shadow-sm rounded-4 p-4 mb-4 bg-white">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="fw-bold text-dark mb-0">
+                    <i class="bi bi-pencil-square text-primary me-2"></i>Observaciones Clínicas y Síntesis del Evaluador
+                </h6>
+                <span class="badge bg-primary-subtle text-primary">Editable</span>
+            </div>
+
+            <?php if (isset($_SESSION['msg_observacion'])): ?>
+                <div class="alert alert-success py-2 px-3 small alert-dismissible fade show" role="alert">
+                    <i class="bi bi-check-circle-fill me-1"></i> <?= htmlspecialchars($_SESSION['msg_observacion']) ?>
+                    <button type="button" class="btn-close p-2" data-bs-dismiss="alert"></button>
+                </div>
+                <?php unset($_SESSION['msg_observacion']); ?>
+            <?php endif; ?>
+
+            <form method="POST" action="../controllers/EvaluacionController.php">
+                <input type="hidden" name="accion" value="actualizar_observaciones">
+                <input type="hidden" name="evaluacion_id" value="<?= htmlspecialchars($paciente['evaluacion_id'] ?? '1') ?>">
+                
+                <div class="mb-3">
+                    <textarea class="form-control" name="observaciones" rows="3" placeholder="Añada apreciaciones diagnósticas, derivaciones sugeridas o notas de seguimiento en base a los puntajes obtenidos..."><?= htmlspecialchars($paciente['observaciones'] ?? 'Paciente colaboradora durante la aplicación. Refiere sobrecarga laboral en las últimas semanas.') ?></textarea>
+                </div>
+                
+                <div class="d-flex justify-content-end no-print">
+                    <button type="submit" class="btn btn-psico-primary btn-sm px-4">
+                        <i class="bi bi-save me-1"></i> Guardar / Actualizar Observaciones
+                    </button>
+                </div>
+            </form>
+        </div>
+        
         <!-- Nota Técnica y Disclaimer Ético / Legal -->
         <div class="card border-0 shadow-sm p-4 bg-light rounded-4">
             <h6 class="fw-bold text-dark mb-2"><i class="bi bi-info-circle text-primary me-2"></i>Consideraciones de Uso Clínico y Deontológico</h6>
