@@ -36,30 +36,31 @@ unset($_SESSION['error_login']);
             <?php endif; ?>
 
             <form id="form-login" method="POST" action="../controllers/LoginController.php" novalidate>
-                <!-- Usuario / Correo -->
-                <div class="form-floating mb-3">
-                    <input type="text" 
-                           class="form-control rounded-3" 
-                           id="usuario" 
-                           name="usuario" 
-                           placeholder="nombre@institucion.cl" 
-                           required 
-                           autocomplete="username">
-                    <label for="usuario"><i class="bi bi-person me-1"></i> Usuario o Correo Institucional</label>
-                    <div class="invalid-feedback">Por favor ingrese su usuario o correo.</div>
-                </div>
+                
+            <!-- Correo Electrónico Institucional -->
+            <div class="form-floating mb-3">
+                <input type="email" 
+                    class="form-control rounded-3" 
+                    id="usuario" 
+                    name="usuario" 
+                    placeholder="nombre@institucion.cl" 
+                    required 
+                    autocomplete="email">
+                <label for="usuario"><i class="bi bi-envelope me-1"></i> Correo Electrónico Institucional</label>
+                <div class="invalid-feedback">Ingrese un correo electrónico válido (debe incluir @ y dominio, ej: usuario@dominio.cl).</div>
+            </div>
 
                 <!-- Contraseña con botón de alternancia -->
                 <div class="input-group mb-3">
                     <div class="form-floating flex-grow-1">
-                        <input type="password" 
-                               class="form-control rounded-start-3" 
-                               id="password" 
-                               name="password" 
-                               placeholder="Contraseña" 
-                               required 
-                               autocomplete="current-password">
-                        <label for="password"><i class="bi bi-key me-1"></i> Contraseña de Acceso</label>
+                    <input type="password" 
+                            class="form-control rounded-start-3" 
+                            id="password" 
+                            name="password" 
+                            placeholder="Contraseña" 
+                            required 
+                            autocomplete="current-password">
+                    <label for="password"><i class="bi bi-key me-1"></i> Contraseña de Acceso</label>
                     </div>
                     <button class="btn btn-outline-secondary border rounded-end-3 px-3 d-flex align-items-center" 
                             type="button" 
@@ -109,8 +110,28 @@ unset($_SESSION['error_login']);
             iconToggle.classList.toggle('bi-eye-slash', isPassword);
         });
 
-        const formLogin = document.getElementById('form-login');
+     const formLogin = document.getElementById('form-login');
+        const inputEmail = document.getElementById('usuario');
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        // Validar formato estricto correo@dominio.ext mientras escribe
+        inputEmail.addEventListener('input', () => {
+            const valor = inputEmail.value.trim();
+            if (!emailRegex.test(valor)) {
+                inputEmail.setCustomValidity('Formato de correo inválido');
+            } else {
+                inputEmail.setCustomValidity('');
+            }
+        });
+
         formLogin.addEventListener('submit', (e) => {
+            // Verificar el formato antes de evaluar checkValidity()
+            if (!emailRegex.test(inputEmail.value.trim())) {
+                inputEmail.setCustomValidity('Formato de correo inválido');
+            } else {
+                inputEmail.setCustomValidity('');
+            }
+
             if (!formLogin.checkValidity()) {
                 e.preventDefault();
                 e.stopPropagation();
