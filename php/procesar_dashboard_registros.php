@@ -16,9 +16,10 @@ $busqueda = isset($_GET['busqueda']) ? trim($_GET['busqueda']) : '';
 
 try {
     // Preparamos la llamada al Procedimiento Almacenado
-    $stmt = $conn->prepare("CALL sp_obtener_registros_dashboard(:busqueda)");
+    $stmt = $conn->prepare("CALL sp_obtener_registros_dashboard(:id_evaluador, :busqueda)");
     
     // Vinculamos el parámetro de búsqueda de forma segura
+    $stmt->bindParam(':id_evaluador', $_SESSION['id_evaluador'], PDO::PARAM_INT);
     $stmt->bindParam(':busqueda', $busqueda, PDO::PARAM_STR);
     $stmt->execute();
     

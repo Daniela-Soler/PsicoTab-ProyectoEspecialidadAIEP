@@ -14,11 +14,15 @@ header('Content-Type: application/json; charset=utf-8');
 
 try {
     // 3. Llamamos al Procedimiento Almacenado
-    $stmt = $conn->prepare("CALL sp_obtener_estadisticas_dashboard()");
+    $stmt = $conn->prepare("CALL sp_obtener_estadisticas_dashboard(:id_evaluador)");
+
+    $stmt->bindParam(':id_evaluador', $_SESSION['id_evaluador'], PDO::PARAM_INT);
+
     $stmt->execute();
     
     // 4. Extraemos la fila con los totales
     $estadisticas = $stmt->fetch(PDO::FETCH_ASSOC);
+    
     
     // Si por algún motivo la BD no devuelve nada, enviamos ceros por defecto
     if (!$estadisticas) {
