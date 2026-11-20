@@ -1,9 +1,13 @@
 <?php
 session_start();
-$evaluador = $_SESSION['evaluador'] ?? [
-    'nombre' => 'Evaluador Invitado',
-    'rol' => 'Psicólogo Clínico'
-];
+
+if (!isset($_SESSION['id_evaluador'])) {
+    header('Location: login.php');
+    exit();
+}
+
+$nombre_evaluador = $_SESSION['nombre_evaluador'] ?? 'Evaluador Clínico';
+$rol_evaluador    = $_SESSION['evaluador']['rol'] ?? 'Evaluador Clínico';
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -27,10 +31,10 @@ $evaluador = $_SESSION['evaluador'] ?? [
             <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
                 <div>
                     <h4 class="fw-bold text-dark mb-1">
-                        Bienvenido/a, <?= htmlspecialchars($evaluador['nombre']) ?>
+                        Bienvenido/a, <?= htmlspecialchars($nombre_evaluador) ?>
                     </h4>
                     <p class="text-muted small mb-0">
-                        Sesión activa | <?= htmlspecialchars($evaluador['rol']) ?> | Entorno seguro bajo Ley N° 19.628
+                        Sesión activa | <?= htmlspecialchars($rol_evaluador) ?> | Entorno seguro bajo Ley N° 19.628
                     </p>
                 </div>
                 <div>
@@ -51,7 +55,7 @@ $evaluador = $_SESSION['evaluador'] ?? [
                         </div>
                         <div>
                             <span class="text-muted small d-block">Evaluaciones Realizadas</span>
-                            <h3 class="fw-bold mb-0 text-dark">18</h3>
+                            <h3 class="fw-bold mb-0 text-dark" id="stat-total-evaluaciones">-</h3>
                         </div>
                     </div>
                 </div>
@@ -65,7 +69,7 @@ $evaluador = $_SESSION['evaluador'] ?? [
                         </div>
                         <div>
                             <span class="text-muted small d-block">Alertas Críticas (Ítem 9)</span>
-                            <h3 class="fw-bold mb-0 text-dark">2</h3>
+                            <h3 class="fw-bold mb-0 text-dark" id="stat-alertas-criticas">-</h3>
                         </div>
                     </div>
                 </div>
@@ -113,25 +117,10 @@ $evaluador = $_SESSION['evaluador'] ?? [
                             <th class="text-end">Acción</th>
                         </tr>
                     </thead>
-                    <tbody class="small">
+                    <tbody class="small" id="tbody-registros">
                         <tr>
-                            <td class="col-rut"><code>12.345.678-K</code></td>
-                            <td class="col-nombre">P. González R.</td>
-                            <td>Hoy, 10:15</td>
-                            <td><span class="badge bg-secondary-subtle text-dark">PHQ-9, GAD-7, ASRS, WHODAS</span></td>
-                            <td><span class="badge bg-danger">Positiva</span></td>
-                            <td class="text-end">
-                                <a href="resultados.php" class="btn btn-sm btn-outline-primary">Ver Informe</a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="col-rut"><code>18.765.432-1</code></td>
-                            <td class="col-nombre">M. Silva T.</td>
-                            <td>Ayer, 16:30</td>
-                            <td><span class="badge bg-secondary-subtle text-dark">PHQ-9, GAD-7</span></td>
-                            <td><span class="badge bg-success-subtle text-success">Negativa</span></td>
-                            <td class="text-end">
-                                <a href="resultados.php" class="btn btn-sm btn-outline-primary">Ver Informe</a>
+                            <td colspan="6" class="text-center text-muted py-4">
+                                <span class="spinner-border spinner-border-sm me-2"></span>Cargando registros...
                             </td>
                         </tr>
                     </tbody>
@@ -140,18 +129,6 @@ $evaluador = $_SESSION['evaluador'] ?? [
         </div>
 
     <!-- Bootstrap 5 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        document.getElementById('filtro-registros').addEventListener('keyup', function() {
-            const termino = this.value.toLowerCase().trim();
-            const filas = document.querySelectorAll('#tabla-registros tbody tr');
-
-            filas.forEach(fila => {
-                const rut = fila.querySelector('.col-rut').textContent.toLowerCase();
-                const nombre = fila.querySelector('.col-nombre').textContent.toLowerCase();
-                fila.style.display = (rut.includes(termino) || nombre.includes(termino)) ? '' : 'none';
-            });
-        });
-    </script>
+    <script src="../assets/js/dashboard.js"></script>
 </body>
 </html>
