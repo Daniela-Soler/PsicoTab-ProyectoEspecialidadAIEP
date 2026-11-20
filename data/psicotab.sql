@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1:3306
--- Tiempo de generación: 14-11-2026 a las 04:01:16
+-- Tiempo de generación: 20-11-2026 a las 02:22:34
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -20,11 +20,124 @@ SET time_zone = "+00:00";
 --
 -- Base de datos: `psicotab`
 --
+CREATE DATABASE IF NOT EXISTS `psicotab` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+USE `psicotab`;
 
 DELIMITER $$
 --
 -- Procedimientos
 --
+DROP PROCEDURE IF EXISTS `sp_actualizar_observaciones`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_actualizar_observaciones` (IN `p_id_evaluacion` INT, IN `p_id_evaluador` INT, IN `p_observaciones` TEXT)   BEGIN
+    UPDATE EvaluacionGeneral 
+    SET Observaciones = p_observaciones 
+    WHERE ID_Evaluacion = p_id_evaluacion 
+      AND id_evaluador = p_id_evaluador;
+END$$
+
+DROP PROCEDURE IF EXISTS `sp_buscar_paciente`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_buscar_paciente` (IN `p_id_evaluador` INT, IN `p_busqueda` VARCHAR(150))   BEGIN
+    SELECT DISTINCT 
+        P.ID_Paciente,
+        P.RUT,
+        P.Nombre,
+        P.Fecha_Nacimiento,
+        P.Sexo
+    FROM Paciente P
+    INNER JOIN EvaluacionGeneral EG ON P.ID_Paciente = EG.id_paciente
+    WHERE EG.id_evaluador = p_id_evaluador
+      AND (
+          P.RUT LIKE CONCAT('%', p_busqueda, '%') 
+          OR P.Nombre LIKE CONCAT('%', p_busqueda, '%')
+      )
+    LIMIT 10;
+END$$
+
+DROP PROCEDURE IF EXISTS `sp_crear_evaluacion`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_crear_evaluacion` (IN `p_contexto` ENUM('CESFAM','Educacional','Particular'), IN `p_id_paciente` INT, IN `p_id_evaluador` INT, IN `p_observaciones` TEXT)   BEGIN
+    INSERT INTO EvaluacionGeneral (ContextoInstitucional, id_paciente, id_evaluador, Observaciones)
+    VALUES (p_contexto, p_id_paciente, p_id_evaluador, p_observaciones);
+
+    SELECT LAST_INSERT_ID() AS ID_Evaluacion;
+END$$
+
+DROP PROCEDURE IF EXISTS `sp_crear_paciente`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_crear_paciente` (IN `p_rut` VARCHAR(15), IN `p_nombre` VARCHAR(150), IN `p_fecha_nacimiento` DATE, IN `p_sexo` ENUM('F','M','Otro'))   BEGIN
+    DECLARE v_id_paciente INT DEFAULT NULL;
+
+    -- 1. Buscamos silenciosamente si el RUT ya existe
+    SELECT ID_Paciente INTO v_id_paciente
+    FROM Paciente
+    WHERE RUT = p_rut
+    LIMIT 1;
+
+    -- 2. Si no existe, lo insertamos con un UUID automático
+    IF v_id_paciente IS NULL THEN
+        INSERT INTO Paciente (Codigo_Paciente, RUT, Nombre, Fecha_Nacimiento, Sexo)
+        VALUES (UUID(), p_rut, p_nombre, p_fecha_nacimiento, p_sexo);
+        
+        SET v_id_paciente = LAST_INSERT_ID();
+    END IF;
+
+    -- 3. Devolvemos siempre el ID_Paciente (sea nuevo o existente)
+    SELECT v_id_paciente AS ID_Paciente;
+END$$
+
+DROP PROCEDURE IF EXISTS `sp_guardar_asrs`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_guardar_asrs` (IN `p_id_evaluacion` INT, IN `p_item1` TINYINT UNSIGNED, IN `p_item2` TINYINT UNSIGNED, IN `p_item3` TINYINT UNSIGNED, IN `p_item4` TINYINT UNSIGNED, IN `p_item5` TINYINT UNSIGNED, IN `p_item6` TINYINT UNSIGNED, IN `p_aciertos_umbral` TINYINT UNSIGNED, IN `p_resultado_tamizaje` ENUM('Positivo','Negativo'))   BEGIN
+    INSERT INTO ASRS (
+        id_evaluacionA,
+        item1a, item2a, item3a, item4a, item5a, item6a,
+        AciertosUmbral, ResultadoTamizaje
+    ) VALUES (
+        p_id_evaluacion,
+        p_item1, p_item2, p_item3, p_item4, p_item5, p_item6,
+        p_aciertos_umbral, p_resultado_tamizaje
+    );
+END$$
+
+DROP PROCEDURE IF EXISTS `sp_guardar_gad7`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_guardar_gad7` (IN `p_id_evaluacion` INT, IN `p_item1` TINYINT UNSIGNED, IN `p_item2` TINYINT UNSIGNED, IN `p_item3` TINYINT UNSIGNED, IN `p_item4` TINYINT UNSIGNED, IN `p_item5` TINYINT UNSIGNED, IN `p_item6` TINYINT UNSIGNED, IN `p_item7` TINYINT UNSIGNED, IN `p_puntaje_total` TINYINT UNSIGNED, IN `p_nivel_ansiedad` ENUM('Mínima','Leve','Moderada','Grave'))   BEGIN
+    INSERT INTO GAD7 (
+        id_evaluacionG,
+        item1g, item2g, item3g, item4g, item5g, item6g, item7g,
+        PuntajeTotal_GAD7, NivelAnsiedad
+    ) VALUES (
+        p_id_evaluacion,
+        p_item1, p_item2, p_item3, p_item4, p_item5, p_item6, p_item7,
+        p_puntaje_total, p_nivel_ansiedad
+    );
+END$$
+
+DROP PROCEDURE IF EXISTS `sp_guardar_phq9`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_guardar_phq9` (IN `p_id_evaluacion` INT, IN `p_item1` TINYINT UNSIGNED, IN `p_item2` TINYINT UNSIGNED, IN `p_item3` TINYINT UNSIGNED, IN `p_item4` TINYINT UNSIGNED, IN `p_item5` TINYINT UNSIGNED, IN `p_item6` TINYINT UNSIGNED, IN `p_item7` TINYINT UNSIGNED, IN `p_item8` TINYINT UNSIGNED, IN `p_item9` TINYINT UNSIGNED, IN `p_puntaje_total` TINYINT UNSIGNED, IN `p_nivel_severidad` ENUM('Mínima','Leve','Moderada','Moderadamente grave','Grave'), IN `p_alerta_autolesiva` BOOLEAN)   BEGIN
+    INSERT INTO PHQ9 (
+        id_evaluacionP,
+        item1p, item2p, item3p, item4p, item5p, item6p, item7p, item8p, item9p,
+        PuntajeTotal_PHQ9, NivelSeveridad, AlertaAutolesiva
+    ) VALUES (
+        p_id_evaluacion,
+        p_item1, p_item2, p_item3, p_item4, p_item5, p_item6, p_item7, p_item8, p_item9,
+        p_puntaje_total, p_nivel_severidad, p_alerta_autolesiva
+    );
+END$$
+
+DROP PROCEDURE IF EXISTS `sp_guardar_whodas`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_guardar_whodas` (IN `p_id_evaluacion` INT, IN `p_item1` TINYINT UNSIGNED, IN `p_item2` TINYINT UNSIGNED, IN `p_item3` TINYINT UNSIGNED, IN `p_item4` TINYINT UNSIGNED, IN `p_item5` TINYINT UNSIGNED, IN `p_item6` TINYINT UNSIGNED, IN `p_item7` TINYINT UNSIGNED, IN `p_item8` TINYINT UNSIGNED, IN `p_item9` TINYINT UNSIGNED, IN `p_item10` TINYINT UNSIGNED, IN `p_item11` TINYINT UNSIGNED, IN `p_item12` TINYINT UNSIGNED, IN `p_puntaje_bruto` TINYINT UNSIGNED, IN `p_porcentaje_limitacion` DECIMAL(5,2) UNSIGNED, IN `p_nivel_limitacion` ENUM('Ninguna','Leve','Moderada','Severa','Extrema'))   BEGIN
+    INSERT INTO WHODAS (
+        id_evaluacionW,
+        item1w, item2w, item3w, item4w, item5w, item6w,
+        item7w, item8w, item9w, item10w, item11w, item12w,
+        PuntajeBruto, PorcentajeLimitacion, NivelLimitacion
+    ) VALUES (
+        p_id_evaluacion,
+        p_item1, p_item2, p_item3, p_item4, p_item5, p_item6,
+        p_item7, p_item8, p_item9, p_item10, p_item11, p_item12,
+        p_puntaje_bruto, p_porcentaje_limitacion, p_nivel_limitacion
+    );
+END$$
+
+DROP PROCEDURE IF EXISTS `sp_login_evaluador`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_login_evaluador` (IN `p_correo` VARCHAR(255))   BEGIN
     SELECT ID_Evaluador, Nombre, Clave 
     FROM Evaluador 
@@ -32,37 +145,48 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_login_evaluador` (IN `p_correo` 
     LIMIT 1;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_obtener_estadisticas_dashboard` ()   BEGIN
+DROP PROCEDURE IF EXISTS `sp_obtener_estadisticas_dashboard`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_obtener_estadisticas_dashboard` (IN `p_id_evaluador` INT)   BEGIN
     DECLARE total_evaluaciones INT;
     DECLARE alertas_criticas INT;
 
-    -- Contar todas las evaluaciones registradas
+    -- Contar solo las evaluaciones de este evaluador
     SELECT COUNT(ID_Evaluacion) INTO total_evaluaciones 
-    FROM EvaluacionGeneral;
+    FROM EvaluacionGeneral
+    WHERE id_evaluador = p_id_evaluador;
 
-    -- Contar solo los test PHQ-9 que tengan la alerta autolesiva en TRUE (1)
-    SELECT COUNT(ID_PHQ9) INTO alertas_criticas 
-    FROM PHQ9 
-    WHERE AlertaAutolesiva = TRUE;
+    -- Contar solo alertas autolesivas de evaluaciones de este evaluador
+    SELECT COUNT(T1.ID_PHQ9) INTO alertas_criticas 
+    FROM PHQ9 T1
+    INNER JOIN EvaluacionGeneral EG ON T1.id_evaluacionP = EG.ID_Evaluacion
+    WHERE T1.AlertaAutolesiva = TRUE 
+      AND EG.id_evaluador = p_id_evaluador;
 
-    -- Entregar ambos datos en un paquete limpio
     SELECT total_evaluaciones AS TotalEvaluaciones, alertas_criticas AS AlertasCriticas;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_obtener_registros_dashboard` (IN `p_busqueda` VARCHAR(255))   BEGIN
+DROP PROCEDURE IF EXISTS `sp_obtener_informe_completo`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_obtener_informe_completo` (IN `p_id_evaluacion` INT, IN `p_id_evaluador` INT)   BEGIN
+    SELECT * 
+    FROM vw_informe_completo 
+    WHERE ID_Evaluacion = p_id_evaluacion 
+      AND ID_Evaluador = p_id_evaluador 
+    LIMIT 1;
+END$$
+
+DROP PROCEDURE IF EXISTS `sp_obtener_registros_dashboard`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_obtener_registros_dashboard` (IN `p_id_evaluador` INT, IN `p_busqueda` VARCHAR(255))   BEGIN
     SELECT 
         EG.ID_Evaluacion,
         P.RUT AS Identificador,
         P.Nombre AS Paciente,
         EG.Fecha_hora AS Fecha,
-        -- Concatenamos inteligentemente los nombres de los tests que sí existen en la evaluación
         CONCAT_WS(', ', 
             IF(T1.ID_PHQ9 IS NOT NULL, 'PHQ-9', NULL),
             IF(T2.ID_GAD7 IS NOT NULL, 'GAD-7', NULL),
             IF(T3.ID_ASRS IS NOT NULL, 'ASRS v1.1', NULL),
             IF(T4.ID_WHODAS IS NOT NULL, 'WHODAS 2.0', NULL)
         ) AS BateriasAplicadas,
-        -- Evaluamos la alerta del PHQ-9 (Si no se aplicó, mandamos 'N/A')
         IF(T1.ID_PHQ9 IS NOT NULL, 
             IF(T1.AlertaAutolesiva = 1, 'Crítica', 'Negativa'), 
         'N/A') AS AlertaPHQ9
@@ -72,11 +196,13 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_obtener_registros_dashboard` (IN
     LEFT JOIN GAD7 T2 ON EG.ID_Evaluacion = T2.id_evaluacionG
     LEFT JOIN ASRS T3 ON EG.ID_Evaluacion = T3.id_evaluacionA
     LEFT JOIN WHODAS T4 ON EG.ID_Evaluacion = T4.id_evaluacionW
-    WHERE 
-        p_busqueda IS NULL 
-        OR p_busqueda = '' 
-        OR P.RUT LIKE CONCAT('%', p_busqueda, '%') 
-        OR P.Nombre LIKE CONCAT('%', p_busqueda, '%')
+    WHERE EG.id_evaluador = p_id_evaluador
+      AND (
+          p_busqueda IS NULL 
+          OR p_busqueda = '' 
+          OR P.RUT LIKE CONCAT('%', p_busqueda, '%') 
+          OR P.Nombre LIKE CONCAT('%', p_busqueda, '%')
+      )
     ORDER BY EG.Fecha_hora DESC;
 END$$
 
@@ -88,6 +214,7 @@ DELIMITER ;
 -- Estructura de tabla para la tabla `asrs`
 --
 
+DROP TABLE IF EXISTS `asrs`;
 CREATE TABLE `asrs` (
   `ID_ASRS` int(11) NOT NULL,
   `id_evaluacionA` int(11) NOT NULL,
@@ -102,17 +229,12 @@ CREATE TABLE `asrs` (
 ) ;
 
 --
--- RELACIONES PARA LA TABLA `asrs`:
---   `id_evaluacionA`
---       `evaluaciongeneral` -> `ID_Evaluacion`
---
-
---
 -- Volcado de datos para la tabla `asrs`
 --
 
 INSERT INTO `asrs` (`ID_ASRS`, `id_evaluacionA`, `item1a`, `item2a`, `item3a`, `item4a`, `item5a`, `item6a`, `AciertosUmbral`, `ResultadoTamizaje`) VALUES
-(1, 3, 2, 3, 1, 0, 4, 2, 3, 'Positivo');
+(1, 3, 2, 3, 1, 0, 4, 2, 3, 'Positivo'),
+(2, 6, 2, 3, 2, 3, 1, 2, 4, 'Positivo');
 
 -- --------------------------------------------------------
 
@@ -120,6 +242,7 @@ INSERT INTO `asrs` (`ID_ASRS`, `id_evaluacionA`, `item1a`, `item2a`, `item3a`, `
 -- Estructura de tabla para la tabla `evaluaciongeneral`
 --
 
+DROP TABLE IF EXISTS `evaluaciongeneral`;
 CREATE TABLE `evaluaciongeneral` (
   `ID_Evaluacion` int(11) NOT NULL,
   `ContextoInstitucional` enum('CESFAM','Educacional','Particular') NOT NULL,
@@ -130,19 +253,14 @@ CREATE TABLE `evaluaciongeneral` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- RELACIONES PARA LA TABLA `evaluaciongeneral`:
---   `id_paciente`
---       `paciente` -> `ID_Paciente`
---   `id_evaluador`
---       `evaluador` -> `ID_Evaluador`
---
-
---
 -- Volcado de datos para la tabla `evaluaciongeneral`
 --
 
 INSERT INTO `evaluaciongeneral` (`ID_Evaluacion`, `ContextoInstitucional`, `id_paciente`, `id_evaluador`, `Fecha_hora`, `Observaciones`) VALUES
-(3, 'CESFAM', 1, 1, '2026-11-12 15:01:35', 'Paciente acude a primera sesión. Refiere problemas de sueño y estrés laboral.');
+(3, 'CESFAM', 1, 1, '2026-11-12 15:01:35', 'Paciente presenta leve mejoría en los indicadores de ansiedad. Se sugiere mantener el tratamiento actual.'),
+(4, 'CESFAM', 2, 1, '2026-11-19 19:01:35', 'Paciente colaboradora durante la sesión de prueba.'),
+(6, 'CESFAM', 2, 1, '2026-11-19 19:03:55', 'Prueba de batería completa.'),
+(7, 'CESFAM', 2, 1, '2026-11-19 19:05:11', 'Prueba de batería completa.');
 
 -- --------------------------------------------------------
 
@@ -150,16 +268,13 @@ INSERT INTO `evaluaciongeneral` (`ID_Evaluacion`, `ContextoInstitucional`, `id_p
 -- Estructura de tabla para la tabla `evaluador`
 --
 
+DROP TABLE IF EXISTS `evaluador`;
 CREATE TABLE `evaluador` (
   `ID_Evaluador` int(11) NOT NULL,
   `Correo` varchar(255) NOT NULL,
   `Clave` varchar(255) NOT NULL,
   `Nombre` varchar(150) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- RELACIONES PARA LA TABLA `evaluador`:
---
 
 --
 -- Volcado de datos para la tabla `evaluador`
@@ -174,6 +289,7 @@ INSERT INTO `evaluador` (`ID_Evaluador`, `Correo`, `Clave`, `Nombre`) VALUES
 -- Estructura de tabla para la tabla `gad7`
 --
 
+DROP TABLE IF EXISTS `gad7`;
 CREATE TABLE `gad7` (
   `ID_GAD7` int(11) NOT NULL,
   `id_evaluacionG` int(11) NOT NULL,
@@ -189,17 +305,13 @@ CREATE TABLE `gad7` (
 ) ;
 
 --
--- RELACIONES PARA LA TABLA `gad7`:
---   `id_evaluacionG`
---       `evaluaciongeneral` -> `ID_Evaluacion`
---
-
---
 -- Volcado de datos para la tabla `gad7`
 --
 
 INSERT INTO `gad7` (`ID_GAD7`, `id_evaluacionG`, `item1g`, `item2g`, `item3g`, `item4g`, `item5g`, `item6g`, `item7g`, `PuntajeTotal_GAD7`, `NivelAnsiedad`) VALUES
-(1, 3, 3, 2, 1, 0, 2, 1, 1, 10, 'Moderada');
+(1, 3, 3, 2, 1, 0, 2, 1, 1, 10, 'Moderada'),
+(2, 4, 2, 1, 2, 1, 0, 1, 1, 8, 'Leve'),
+(3, 6, 2, 1, 2, 1, 0, 1, 1, 8, 'Leve');
 
 -- --------------------------------------------------------
 
@@ -207,6 +319,7 @@ INSERT INTO `gad7` (`ID_GAD7`, `id_evaluacionG`, `item1g`, `item2g`, `item3g`, `
 -- Estructura de tabla para la tabla `paciente`
 --
 
+DROP TABLE IF EXISTS `paciente`;
 CREATE TABLE `paciente` (
   `ID_Paciente` int(11) NOT NULL,
   `Codigo_Paciente` varchar(36) NOT NULL,
@@ -217,15 +330,12 @@ CREATE TABLE `paciente` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- RELACIONES PARA LA TABLA `paciente`:
---
-
---
 -- Volcado de datos para la tabla `paciente`
 --
 
 INSERT INTO `paciente` (`ID_Paciente`, `Codigo_Paciente`, `RUT`, `Nombre`, `Fecha_Nacimiento`, `Sexo`) VALUES
-(1, '15141bf6-dec2-11f1-ae0d-5c60bae02a8a', '19876543-2', 'Rodrigo Orellana', '1995-08-15', 'F');
+(1, '15141bf6-dec2-11f1-ae0d-5c60bae02a8a', '19876543-2', 'Rodrigo Orellana', '1995-08-15', 'F'),
+(2, 'c95ed4b7-e464-11f1-8ebd-5c60bae02a8a', '19.876.543-2', 'Camila Soto', '1998-05-14', 'F');
 
 -- --------------------------------------------------------
 
@@ -233,6 +343,7 @@ INSERT INTO `paciente` (`ID_Paciente`, `Codigo_Paciente`, `RUT`, `Nombre`, `Fech
 -- Estructura de tabla para la tabla `phq9`
 --
 
+DROP TABLE IF EXISTS `phq9`;
 CREATE TABLE `phq9` (
   `ID_PHQ9` int(11) NOT NULL,
   `id_evaluacionP` int(11) NOT NULL,
@@ -251,17 +362,46 @@ CREATE TABLE `phq9` (
 ) ;
 
 --
--- RELACIONES PARA LA TABLA `phq9`:
---   `id_evaluacionP`
---       `evaluaciongeneral` -> `ID_Evaluacion`
---
-
---
 -- Volcado de datos para la tabla `phq9`
 --
 
 INSERT INTO `phq9` (`ID_PHQ9`, `id_evaluacionP`, `item1p`, `item2p`, `item3p`, `item4p`, `item5p`, `item6p`, `item7p`, `item8p`, `item9p`, `PuntajeTotal_PHQ9`, `NivelSeveridad`, `AlertaAutolesiva`) VALUES
-(2, 3, 2, 1, 3, 0, 1, 1, 0, 2, 0, 10, 'Leve', 0);
+(2, 3, 2, 1, 3, 0, 1, 1, 0, 2, 0, 10, 'Leve', 0),
+(3, 4, 1, 2, 1, 2, 0, 1, 1, 0, 1, 9, 'Leve', 1),
+(4, 6, 1, 2, 1, 2, 0, 1, 1, 0, 1, 9, 'Leve', 1),
+(5, 7, 1, 2, 1, 2, 0, 1, 1, 0, 2, 10, 'Moderada', 1);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura Stand-in para la vista `vw_informe_completo`
+-- (Véase abajo para la vista actual)
+--
+DROP VIEW IF EXISTS `vw_informe_completo`;
+CREATE TABLE `vw_informe_completo` (
+`ID_Evaluacion` int(11)
+,`Fecha_hora` datetime
+,`ContextoInstitucional` enum('CESFAM','Educacional','Particular')
+,`Observaciones` text
+,`ID_Evaluador` int(11)
+,`Nombre_Evaluador` varchar(150)
+,`ID_Paciente` int(11)
+,`RUT` varchar(15)
+,`Nombre_Paciente` varchar(150)
+,`Fecha_Nacimiento` date
+,`Sexo` enum('F','M','Otro')
+,`PuntajeTotal_PHQ9` tinyint(3) unsigned
+,`Nivel_PHQ9` enum('Mínima','Leve','Moderada','Moderadamente grave','Grave')
+,`item9p` tinyint(3) unsigned
+,`AlertaAutolesiva` tinyint(1)
+,`PuntajeTotal_GAD7` tinyint(3) unsigned
+,`Nivel_GAD7` enum('Mínima','Leve','Moderada','Grave')
+,`Puntaje_ASRS` tinyint(3) unsigned
+,`Resultado_ASRS` enum('Positivo','Negativo')
+,`PuntajeBruto_WHODAS` tinyint(3) unsigned
+,`Porcentaje_WHODAS` decimal(5,2) unsigned
+,`Nivel_WHODAS` enum('Ninguna','Leve','Moderada','Severa','Extrema')
+);
 
 -- --------------------------------------------------------
 
@@ -269,6 +409,7 @@ INSERT INTO `phq9` (`ID_PHQ9`, `id_evaluacionP`, `item1p`, `item2p`, `item3p`, `
 -- Estructura de tabla para la tabla `whodas`
 --
 
+DROP TABLE IF EXISTS `whodas`;
 CREATE TABLE `whodas` (
   `ID_WHODAS` int(11) NOT NULL,
   `id_evaluacionW` int(11) NOT NULL,
@@ -290,17 +431,22 @@ CREATE TABLE `whodas` (
 ) ;
 
 --
--- RELACIONES PARA LA TABLA `whodas`:
---   `id_evaluacionW`
---       `evaluaciongeneral` -> `ID_Evaluacion`
---
-
---
 -- Volcado de datos para la tabla `whodas`
 --
 
 INSERT INTO `whodas` (`ID_WHODAS`, `id_evaluacionW`, `item1w`, `item2w`, `item3w`, `item4w`, `item5w`, `item6w`, `item7w`, `item8w`, `item9w`, `item10w`, `item11w`, `item12w`, `PuntajeBruto`, `PorcentajeLimitacion`, `NivelLimitacion`) VALUES
-(1, 3, 1, 2, 1, 1, 3, 2, 1, 1, 2, 4, 1, 1, 20, 25.50, 'Leve');
+(1, 3, 1, 2, 1, 1, 3, 2, 1, 1, 2, 4, 1, 1, 20, 25.50, 'Leve'),
+(2, 6, 2, 1, 2, 3, 2, 1, 2, 2, 1, 2, 1, 2, 21, 18.75, 'Leve');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura para la vista `vw_informe_completo`
+--
+DROP TABLE IF EXISTS `vw_informe_completo`;
+
+DROP VIEW IF EXISTS `vw_informe_completo`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `vw_informe_completo`  AS SELECT `eg`.`ID_Evaluacion` AS `ID_Evaluacion`, `eg`.`Fecha_hora` AS `Fecha_hora`, `eg`.`ContextoInstitucional` AS `ContextoInstitucional`, `eg`.`Observaciones` AS `Observaciones`, `ev`.`ID_Evaluador` AS `ID_Evaluador`, `ev`.`Nombre` AS `Nombre_Evaluador`, `p`.`ID_Paciente` AS `ID_Paciente`, `p`.`RUT` AS `RUT`, `p`.`Nombre` AS `Nombre_Paciente`, `p`.`Fecha_Nacimiento` AS `Fecha_Nacimiento`, `p`.`Sexo` AS `Sexo`, `phq`.`PuntajeTotal_PHQ9` AS `PuntajeTotal_PHQ9`, `phq`.`NivelSeveridad` AS `Nivel_PHQ9`, `phq`.`item9p` AS `item9p`, `phq`.`AlertaAutolesiva` AS `AlertaAutolesiva`, `gad`.`PuntajeTotal_GAD7` AS `PuntajeTotal_GAD7`, `gad`.`NivelAnsiedad` AS `Nivel_GAD7`, `asrs`.`AciertosUmbral` AS `Puntaje_ASRS`, `asrs`.`ResultadoTamizaje` AS `Resultado_ASRS`, `who`.`PuntajeBruto` AS `PuntajeBruto_WHODAS`, `who`.`PorcentajeLimitacion` AS `Porcentaje_WHODAS`, `who`.`NivelLimitacion` AS `Nivel_WHODAS` FROM ((((((`evaluaciongeneral` `eg` join `paciente` `p` on(`eg`.`id_paciente` = `p`.`ID_Paciente`)) join `evaluador` `ev` on(`eg`.`id_evaluador` = `ev`.`ID_Evaluador`)) left join `phq9` `phq` on(`eg`.`ID_Evaluacion` = `phq`.`id_evaluacionP`)) left join `gad7` `gad` on(`eg`.`ID_Evaluacion` = `gad`.`id_evaluacionG`)) left join `asrs` on(`eg`.`ID_Evaluacion` = `asrs`.`id_evaluacionA`)) left join `whodas` `who` on(`eg`.`ID_Evaluacion` = `who`.`id_evaluacionW`)) ;
 
 --
 -- Índices para tablas volcadas
@@ -371,7 +517,7 @@ ALTER TABLE `asrs`
 -- AUTO_INCREMENT de la tabla `evaluaciongeneral`
 --
 ALTER TABLE `evaluaciongeneral`
-  MODIFY `ID_Evaluacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `ID_Evaluacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT de la tabla `evaluador`
@@ -389,7 +535,7 @@ ALTER TABLE `gad7`
 -- AUTO_INCREMENT de la tabla `paciente`
 --
 ALTER TABLE `paciente`
-  MODIFY `ID_Paciente` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `ID_Paciente` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `phq9`
