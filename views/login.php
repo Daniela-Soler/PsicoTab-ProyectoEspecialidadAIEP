@@ -35,7 +35,7 @@ unset($_SESSION['error_login']);
                 </div>
             <?php endif; ?>
 
-            <form id="form-login" method="POST" action="../controllers/LoginController.php" novalidate>
+            <form id="form-login" method="POST" action="../php/procesar_login.php" novalidate>
                 
             <!-- Correo Electrónico Institucional -->
             <div class="form-floating mb-3">
