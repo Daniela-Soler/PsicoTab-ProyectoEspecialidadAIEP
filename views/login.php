@@ -14,6 +14,9 @@ unset($_SESSION['error_login']);
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <!-- Estilos Globales Centralizados -->
     <link href="../assets/css/styles.css" rel="stylesheet">
+    <link rel="icon" type="image/png" href="../assets/img/favicon.png">
+    <meta name="description" content="PsicoTab: Plataforma web segura para la tabulación, baremación y reportabilidad automatizada de instrumentos psicométricos en salud mental.">
+<meta name="author" content="Silvia Rojas U., Daniela Soler C.">
 </head>
 <body class="login-body-layout">
 
@@ -110,7 +113,7 @@ unset($_SESSION['error_login']);
             iconToggle.classList.toggle('bi-eye-slash', isPassword);
         });
 
-     const formLogin = document.getElementById('form-login');
+        const formLogin = document.getElementById('form-login');
         const inputEmail = document.getElementById('usuario');
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
