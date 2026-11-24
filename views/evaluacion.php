@@ -9,24 +9,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <!-- Estilos Globales Centralizados -->
     <link href="../assets/css/styles.css" rel="stylesheet">
-    <style>
-        .test-selector-card {
-            border: 2px solid var(--psico-card-border);
-            border-radius: 12px;
-            padding: 1rem;
-            cursor: pointer;
-            transition: all 0.2s ease-in-out;
-            background: #ffffff;
-        }
-        .test-selector-card:hover {
-            border-color: var(--psico-teal);
-            box-shadow: 0 4px 10px rgba(27, 166, 166, 0.1);
-        }
-        .btn-check:checked + .test-selector-card {
-            border-color: var(--psico-teal);
-            background-color: rgba(27, 166, 166, 0.06);
-        }
-    </style>
+    <link rel="icon" type="image/png" href="../assets/img/favicon.png">
 </head>
 <body>
 

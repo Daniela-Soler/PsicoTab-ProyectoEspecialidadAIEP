@@ -1,6 +1,7 @@
-/* ==========================================================================
-   ESTILOS ESPECÍFICOS: MÓDULO DE EVALUACIÓN
-   ========================================================================== 
+/*
+==========================================================================
+ESTILOS ESPECÍFICOS: MÓDULO DE EVALUACIÓN
+========================================================================== 
 */
 :root {
     --psico-dark: #0f3b5f;
@@ -290,3 +291,19 @@ body {
         break-inside: avoid;
     }
 }
+    .test-selector-card {
+        border: 2px solid var(--psico-card-border);
+        border-radius: 12px;
+        padding: 1rem;
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+        background: #ffffff;
+    }
+    .test-selector-card:hover {
+        border-color: var(--psico-teal);
+        box-shadow: 0 4px 10px rgba(27, 166, 166, 0.1);
+    }
+    .btn-check:checked + .test-selector-card {
+        border-color: var(--psico-teal);
+        background-color: rgba(27, 166, 166, 0.06);
+    }
