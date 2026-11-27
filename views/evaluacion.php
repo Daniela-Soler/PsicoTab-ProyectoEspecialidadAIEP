@@ -223,7 +223,7 @@
                     <?php endforeach; ?>
 
                     <!-- Ítem 9 (Crítico) -->
-                    <div class="question-card border-warning" id="q-phq9-9" style="background-color: #fffefb;">
+                    <div class="question-card border-warning question-card-critico" id="q-phq9-9">
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <p class="fw-semibold mb-0"><span class="question-number bg-warning text-dark">9</span> Pensamientos de que estaría mejor muerto/a o de lastimarse de alguna manera.</p>
                             <span class="badge bg-warning text-dark"><i class="bi bi-exclamation-triangle-fill"></i> Ítem Crítico</span>
@@ -241,7 +241,7 @@
                     </div>
 
                     <div class="d-flex justify-content-between mt-4">
-                        <button type="button" class="btn btn-outline-secondary" onclick="irATab('paciente-tab')"><i class="bi bi-arrow-left"></i> Volver a Datos</button>
+                        <button type="button" class="btn btn-outline-secondary btn-volver-datos"><i class="bi bi-arrow-left"></i> Volver a Datos</button>
                         <button type="button" class="btn btn-psico-primary btn-siguiente" data-current="phq9">Siguiente <i class="bi bi-arrow-right"></i></button>
                     </div>
                 </div>
@@ -367,8 +367,9 @@
 
                     <div class="d-flex justify-content-between mt-4">
                         <button type="button" class="btn btn-outline-secondary btn-anterior" data-current="whodas"><i class="bi bi-arrow-left"></i> Anterior</button>
-                        <button type="button" class="btn btn-success btn-lg px-4 shadow btn-finalizar" onclick="enviarFormulario()">
-                            <i class="bi bi-cpu-fill me-2"></i> Procesar Baremación y Reporte
+                        <button type="button" class="btn btn-success btn-lg px-4 shadow btn-finalizar">
+                        <i class="bi bi-cpu-fill me-2"></i> Procesar Baremación y Reporte
+                        </button>
                         </button>
                     </div>
                 </div>
@@ -402,142 +403,6 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../assets/js/rut-validator.js"></script>
     <script src="../assets/js/form-validation.js"></script>
-    <script>
-        const ordenPruebas = ['phq9', 'gad7', 'asrs', 'whodas'];
-
-        function getPruebasSeleccionadas() {
-            const checks = document.querySelectorAll('.check-instrumento:checked');
-            return Array.from(checks).map(c => c.value);
-        }
-
-        function actualizarTabsVisibles() {
-            const seleccionadas = getPruebasSeleccionadas();
-            document.getElementById('contador-pruebas').textContent = `${seleccionadas.length} seleccionada(s)`;
-
-            ordenPruebas.forEach(p => {
-                const navItem = document.getElementById(`nav-item-${p}`);
-                if (navItem) {
-                    navItem.style.display = seleccionadas.includes(p) ? 'block' : 'none';
-                }
-            });
-
-            const btnIniciar = document.getElementById('btn-iniciar-pruebas');
-            if (seleccionadas.length === 0) {
-                btnIniciar.disabled = true;
-                btnIniciar.textContent = 'Seleccione al menos 1 prueba';
-            } else {
-                btnIniciar.disabled = false;
-                btnIniciar.innerHTML = `Iniciar Evaluación (${seleccionadas.length}) <i class="bi bi-arrow-right ms-1"></i>`;
-            }
-        }
-
-        document.querySelectorAll('.check-instrumento').forEach(check => {
-            check.addEventListener('change', actualizarTabsVisibles);
-        });
-
-        function irATab(tabId) {
-            const triggerEl = document.getElementById(tabId);
-            if (triggerEl) {
-                const tabInstance = new bootstrap.Tab(triggerEl);
-                tabInstance.show();
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            }
-        }
-
-        document.getElementById('btn-iniciar-pruebas').addEventListener('click', () => {
-            const seleccionadas = getPruebasSeleccionadas();
-            if (seleccionadas.length > 0) {
-                irATab(`${seleccionadas[0]}-tab`);
-            }
-        });
-
-        document.querySelectorAll('.btn-siguiente').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const current = btn.getAttribute('data-current');
-                const seleccionadas = getPruebasSeleccionadas();
-                const currentIndex = seleccionadas.indexOf(current);
-
-                if (currentIndex !== -1 && currentIndex < seleccionadas.length - 1) {
-                    const siguiente = seleccionadas[currentIndex + 1];
-                    irATab(`${siguiente}-tab`);
-                } else {
-                    enviarFormulario();
-                }
-            });
-        });
-
-        document.querySelectorAll('.btn-anterior').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const current = btn.getAttribute('data-current');
-                const seleccionadas = getPruebasSeleccionadas();
-                const currentIndex = seleccionadas.indexOf(current);
-
-                if (currentIndex > 0) {
-                    const anterior = seleccionadas[currentIndex - 1];
-                    irATab(`${anterior}-tab`);
-                } else {
-                    irATab('paciente-tab');
-                }
-            });
-        });
-
-        document.querySelectorAll('.item-critico').forEach(radio => {
-            radio.addEventListener('change', (e) => {
-                if (parseInt(e.target.value, 10) > 0) {
-                    const alertModal = new bootstrap.Modal(document.getElementById('modalAlertaClinica'));
-                    alertModal.show();
-                }
-            });
-        });
-
-        function enviarFormulario() {
-            const form = document.getElementById('form-evaluacion');
-            const btns = document.querySelectorAll('.btn-finalizar');
-            btns.forEach(b => {
-                b.disabled = true;
-                b.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span> Procesando...`;
-            });
-            form.submit();
-        }
-
-        actualizarTabsVisibles();
-
-        // Alternar bloque de búsqueda de paciente antiguo
-        const radioNuevo = document.getElementById('tipo_nuevo');
-        const radioAntiguo = document.getElementById('tipo_antiguo');
-        const bloqueAntiguo = document.getElementById('bloque-buscar-antiguo');
-
-        function toggleTipoPaciente() {
-            const esAntiguo = radioAntiguo.checked;
-            bloqueAntiguo.classList.toggle('d-none', !esAntiguo);
-            
-            // Bloquear edición de campos base si es antiguo (opcional)
-            document.getElementById('paciente_rut').readOnly = esAntiguo;
-            if (!esAntiguo) {
-                document.getElementById('paciente_rut').value = '';
-                document.getElementById('paciente_nombre').value = '';
-                document.getElementById('paciente_nacimiento').value = '';
-                document.getElementById('paciente_sexo').value = '';
-            }
-        }
-
-        radioNuevo.addEventListener('change', toggleTipoPaciente);
-        radioAntiguo.addEventListener('change', toggleTipoPaciente);
-
-        // Simulación de carga desde BD al buscar paciente antiguo
-        document.getElementById('btn-cargar-paciente').addEventListener('click', () => {
-            const query = document.getElementById('buscar_paciente_bd').value.trim();
-            if (!query) {
-                alert('Ingrese un RUT o apellido para buscar.');
-                return;
-            }
-            // Datos simulados que luego Daniela traerá vía fetch/AJAX o PHP
-            document.getElementById('paciente_rut').value = '12.345.678-K';
-            document.getElementById('paciente_nombre').value = 'P. González R.';
-            document.getElementById('paciente_nacimiento').value = '1994-05-14';
-            document.getElementById('paciente_sexo').value = 'F';
-            document.getElementById('paciente_motivo').value = 'atencion_primaria';
-        });
-    </script>
+    <script src="../assets/js/evaluacion.js"></script>
 </body>
 </html>

@@ -66,13 +66,14 @@ unset($_SESSION['error_login']);
                     <label for="password"><i class="bi bi-key me-1"></i> Contraseña de Acceso</label>
                     </div>
                     <button class="btn btn-outline-secondary border rounded-end-3 px-3 d-flex align-items-center" 
-                            type="button" 
-                            id="btn-toggle-password" 
-                            title="Mostrar u ocultar contraseña">
-                        <i class="bi bi-eye" id="icon-toggle-password"></i>
+                        type="button" 
+                        id="btn-toggle-password" 
+                        title="Mostrar u ocultar contraseña"
+                        aria-label="Mostrar u ocultar contraseña">
+                    <i class="bi bi-eye" id="icon-toggle-password" aria-hidden="true"></i>
                     </button>
                     <div class="invalid-feedback">Por favor ingrese su contraseña.</div>
-                </div>
+                    </div>
 
                 <!-- Recordatorio y enlace -->
                 <div class="d-flex justify-content-between align-items-center mb-4">
@@ -80,9 +81,7 @@ unset($_SESSION['error_login']);
                         <input class="form-check-input" type="checkbox" id="recordar" name="recordar">
                         <label class="form-check-label small text-muted" for="recordar">Recordar sesión</label>
                     </div>
-                    <a href="#" class="small text-decoration-none" style="color: var(--psico-primary);" onclick="alert('Consulte con la administración técnica para el restablecimiento de su clave institucional.'); return false;">
-                        ¿Olvidó su clave?
-                    </a>
+                <a href="#" id="link-olvido-clave" class="small text-decoration-none link-psico-primary">¿Olvidó su clave?</a>
                 </div>
 
                 <!-- Botón de Envío -->
@@ -101,50 +100,6 @@ unset($_SESSION['error_login']);
 
     <!-- Bootstrap 5 JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        const btnToggle = document.getElementById('btn-toggle-password');
-        const inputPassword = document.getElementById('password');
-        const iconToggle = document.getElementById('icon-toggle-password');
-
-        btnToggle.addEventListener('click', () => {
-            const isPassword = inputPassword.getAttribute('type') === 'password';
-            inputPassword.setAttribute('type', isPassword ? 'text' : 'password');
-            iconToggle.classList.toggle('bi-eye', !isPassword);
-            iconToggle.classList.toggle('bi-eye-slash', isPassword);
-        });
-
-        const formLogin = document.getElementById('form-login');
-        const inputEmail = document.getElementById('usuario');
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-        // Validar formato estricto correo@dominio.ext mientras escribe
-        inputEmail.addEventListener('input', () => {
-            const valor = inputEmail.value.trim();
-            if (!emailRegex.test(valor)) {
-                inputEmail.setCustomValidity('Formato de correo inválido');
-            } else {
-                inputEmail.setCustomValidity('');
-            }
-        });
-
-        formLogin.addEventListener('submit', (e) => {
-            // Verificar el formato antes de evaluar checkValidity()
-            if (!emailRegex.test(inputEmail.value.trim())) {
-                inputEmail.setCustomValidity('Formato de correo inválido');
-            } else {
-                inputEmail.setCustomValidity('');
-            }
-
-            if (!formLogin.checkValidity()) {
-                e.preventDefault();
-                e.stopPropagation();
-            } else {
-                const btnSubmit = document.getElementById('btn-submit-login');
-                btnSubmit.disabled = true;
-                btnSubmit.innerHTML = `<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> Verificando credenciales...`;
-            }
-            formLogin.classList.add('was-validated');
-        });
-    </script>
+    <script src="../assets/js/login.js"></script>
 </body>
 </html>

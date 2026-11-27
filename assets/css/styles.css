@@ -307,3 +307,15 @@ body {
         border-color: var(--psico-teal);
         background-color: rgba(27, 166, 166, 0.06);
     }
+
+    .search-box-dashboard {
+    max-width: 340px;
+    }
+
+    .link-psico-primary {
+    color: var(--psico-primary);
+}
+
+.question-card-critico {
+    background-color: #fffefb;
+}

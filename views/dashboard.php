@@ -95,11 +95,10 @@ $evaluador = $_SESSION['evaluador'] ?? [
                     <span class="text-muted small">Filtra por RUT o nombre del evaluado</span>
                 </div>
                 
-                <!-- Buscador por RUT o Nombre -->
-                <div class="input-group" style="max-width: 340px;">
-                    <span class="input-group-text bg-light border-end-0"><i class="bi bi-search text-muted"></i></span>
-                    <input type="text" id="filtro-registros" name="buscar" class="form-control border-start-0" placeholder="Buscar RUT o nombre...">
-                </div>
+            <!-- Buscador por RUT o Nombre -->
+            <div class="input-group search-box-dashboard">
+                <span class="input-group-text bg-light border-end-0"><i class="bi bi-search text-muted" aria-hidden="true"></i></span>
+                <input type="text" id="filtro-registros" name="buscar" class="form-control border-start-0" placeholder="Buscar RUT o nombre..." aria-label="Buscar registros por RUT o nombre">
             </div>
 
             <div class="table-responsive">
@@ -142,17 +141,6 @@ $evaluador = $_SESSION['evaluador'] ?? [
 
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        document.getElementById('filtro-registros').addEventListener('keyup', function() {
-            const termino = this.value.toLowerCase().trim();
-            const filas = document.querySelectorAll('#tabla-registros tbody tr');
-
-            filas.forEach(fila => {
-                const rut = fila.querySelector('.col-rut').textContent.toLowerCase();
-                const nombre = fila.querySelector('.col-nombre').textContent.toLowerCase();
-                fila.style.display = (rut.includes(termino) || nombre.includes(termino)) ? '' : 'none';
-            });
-        });
-    </script>
+    <script src="../assets/js/dashboard.js"></script>
 </body>
 </html>

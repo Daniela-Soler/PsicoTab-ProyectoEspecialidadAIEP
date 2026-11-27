@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /views/login.php
+Disallow: /controllers/
+Disallow: /models/
+Disallow: /views/dashboard.php
+Disallow: /views/evaluacion.php
+Disallow: /views/resultados.php
+Disallow: /assets/
