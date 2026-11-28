@@ -23,8 +23,8 @@ inputEmail.addEventListener('input', () => {
     }
 });
 
+let enviandoLogin = false;
 formLogin.addEventListener('submit', (e) => {
-    // Verificar el formato antes de evaluar checkValidity()
     if (!emailRegex.test(inputEmail.value.trim())) {
         inputEmail.setCustomValidity('Formato de correo inválido');
     } else {
@@ -34,10 +34,17 @@ formLogin.addEventListener('submit', (e) => {
     if (!formLogin.checkValidity()) {
         e.preventDefault();
         e.stopPropagation();
-    } else {
-        const btnSubmit = document.getElementById('btn-submit-login');
-        btnSubmit.disabled = true;
-        btnSubmit.innerHTML = `<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> Verificando credenciales...`;
+        return;
     }
+
+    if (enviandoLogin) {
+        e.preventDefault();
+        return;
+    }
+
+    enviandoLogin = true;
+    const btnSubmit = document.getElementById('btn-submit-login');
+    btnSubmit.disabled = true;
+    btnSubmit.innerHTML = `<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> Verificando credenciales...`;
     formLogin.classList.add('was-validated');
 });

@@ -6,9 +6,27 @@
  * - Envío vía fetch + JSON a evaluacion_guardar.php.
  */
 
+function generarIdempotencyKey() {
+    if (window.crypto && typeof window.crypto.randomUUID === 'function') {
+        return window.crypto.randomUUID();
+    }
+    return 'idem_' + Date.now() + '_' + Math.random().toString(36).substring(2, 12);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('form-evaluacion');
     if (!form) return;
+
+    let enviandoEvaluacion = false;
+    let idempotencyKey = generarIdempotencyKey();
+
+    // Si el usuario cambia entre Paciente Nuevo / Antiguo, se inicia un ciclo distinto
+    document.querySelectorAll('input[name="tipo_paciente"]').forEach(radio => {
+        radio.addEventListener('change', () => {
+            idempotencyKey = generarIdempotencyKey();
+        });
+    });
+
     form.addEventListener('submit', (e) => {
         e.preventDefault();
         window.enviarFormulario();
@@ -37,6 +55,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!validarFormularioCompleto()) {
             return;
         }
+
+        enviandoEvaluacion = true;
 
         const btns = document.querySelectorAll('.btn-finalizar');
         btns.forEach(b => {
@@ -74,7 +94,10 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const response = await fetch('../php/evaluacion_guardar.php', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Idempotency-Key': idempotencyKey
+                 },
                 body: JSON.stringify(payload)
             });
 
@@ -89,13 +112,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error(data.error || 'No se pudo guardar la evaluación.');
             }
 
+            // Evaluación confirmada: preparamos una nueva clave para futuras evaluaciones
+            idempotencyKey = generarIdempotencyKey();
             window.location.href = `resultados.php?id_evaluacion=${encodeURIComponent(data.id_evaluacion)}`;
 
         } catch (error) {
+            enviandoEvaluacion = false;
             alert('Error: ' + error.message);
             btns.forEach(b => {
                 b.disabled = false;
-                b.innerHTML = `<i class="bi bi-cpu-fill me-2"></i> Procesar Baremación y Reporte`;
+                if (b.dataset.textoOriginal) {
+                    b.innerHTML = b.dataset.textoOriginal;
+                } else {
+                    b.innerHTML = `<i class="bi bi-cpu-fill me-2"></i> Procesar Baremación y Reporte`;
+                }
             });
         }
     };

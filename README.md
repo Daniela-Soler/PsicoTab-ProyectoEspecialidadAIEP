@@ -30,17 +30,17 @@ El desarrollo se ejecuta bajo la metodología ágil eXtreme Programming (XP), pr
 - [x] Definición de Requerimientos Funcionales y No Funcionales (RF/RNF).
 - [x] Análisis de Riesgos de Seguridad aplicando el Modelo STRIDE.
 - [x] Diseño UI/UX y prototipado navegable de alta fidelidad en Figma.
-- [ ] Modelado normalizado de la Base de Datos relacional en MySQL.
+- [x] Modelado normalizado de la Base de Datos relacional en MySQL.
 
 **Fase 2: Desarrollo Frontend y Backend**
-- [ ] Implementación de Módulo de Autenticación seguro (hash bcrypt y control de sesiones).
-- [ ] Desarrollo del Módulo de Registro de Pacientes.
-- [ ] Maquetación responsiva de cuestionarios (34 reactivos) con Bootstrap 5 y validación en cliente con JavaScript.
-- [ ] Programación del Motor de Baremación algorítmica en PHP puro (PHQ-9, GAD-7, ASRS v1.1 y WHODAS 2.0).
+- [x] Implementación de Módulo de Autenticación seguro (hash bcrypt y control de sesiones).
+- [x] Desarrollo del Módulo de Registro de Pacientes.
+- [x] Maquetación responsiva de cuestionarios (34 reactivos) con Bootstrap 5 y validación en cliente con JavaScript.
+- [x] Programación del Motor de Baremación algorítmica en PHP puro (PHQ-9, GAD-7, ASRS v1.1 y WHODAS 2.0).
 
 **Fase 3: Pruebas y Despliegue**
 - [ ] Ejecución de pruebas unitarias y validación bidireccional de datos (Prevención de inyección SQL mediante sentencias preparadas).
-- [ ] Generación automatizada de Fichas Resumen con semaforización de riesgo y alertas tempranas.
+- [x] Generación automatizada de Fichas Resumen con semaforización de riesgo y alertas tempranas.
 - [ ] Despliegue funcional en entorno de servidor local (XAMPP).
 
 Desarrollado como proyecto de especialidad - Técnico en Programación y Análisis de Sistemas.
